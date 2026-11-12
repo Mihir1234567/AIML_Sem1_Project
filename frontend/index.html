@@ -1,20 +1,31 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="h-full">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CrowdPulse — AI Crowdfunding Predictor & Campaign Advisor</title>
+  <title>CrowdPulse — AI Crowdfunding Success Predictor & Campaign Advisor</title>
+  
+  <!-- Google Fonts: Plus Jakarta Sans & Fira Code -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Chart.js CDN -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
+
   <script>
     tailwind.config = {
       darkMode: 'class',
       theme: {
         extend: {
+          fontFamily: {
+            sans: ['Plus Jakarta Sans', 'sans-serif'],
+            mono: ['Fira Code', 'monospace'],
+          },
           colors: {
             brand: {
               50: '#f0fdf4',
@@ -25,142 +36,195 @@
             },
             accent: {
               500: '#6366f1',
-              600: '#4f46e5'
+              600: '#4f46e5',
+              700: '#4338ca',
             }
+          },
+          boxShadow: {
+            'bento': '0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 10px 25px -5px rgba(0, 0, 0, 0.04)',
+            'bento-hover': '0 10px 30px -10px rgba(99, 102, 241, 0.15), 0 20px 25px -5px rgba(0, 0, 0, 0.05)',
+            'glow-emerald': '0 0 25px -5px rgba(34, 197, 94, 0.3)',
+            'glow-rose': '0 0 25px -5px rgba(244, 63, 94, 0.3)',
           }
         }
       }
     }
   </script>
+
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
     body {
       font-family: 'Plus Jakarta Sans', sans-serif;
     }
-    .glass-card {
-      background: rgba(255, 255, 255, 0.95);
-      backdrop-filter: blur(12px);
-      border: 1px solid rgba(229, 231, 235, 0.8);
+    .tabular-nums {
+      font-variant-numeric: tabular-nums;
     }
-    .gradient-header {
-      background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f766e 100%);
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 9999px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
     }
   </style>
 </head>
-<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col antialiased">
+<body class="bg-[#f8fafc] text-slate-800 min-h-screen flex flex-col antialiased selection:bg-indigo-500 selection:text-white">
+
+  <!-- Top Announcement / Live Indicator Bar -->
+  <div class="bg-slate-900 border-b border-slate-800 text-slate-300 text-xs py-2 px-4">
+    <div class="max-w-7xl mx-auto flex items-center justify-between">
+      <div class="flex items-center space-x-2">
+        <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-semibold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">ML Ops</span>
+        <span class="hidden sm:inline text-slate-400">Pre-launch decision support powered by</span>
+        <span class="text-white font-medium">HistGradientBoosting (Test ROC-AUC: 71.8%)</span>
+      </div>
+      <div class="flex items-center space-x-3">
+        <div class="flex items-center space-x-1.5">
+          <span id="backendDot" class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          <span id="backendText" class="text-slate-300 font-medium">System: Online</span>
+        </div>
+        <span class="text-slate-600">|</span>
+        <a href="/docs" target="_blank" class="text-indigo-400 hover:text-indigo-300 transition font-medium flex items-center space-x-1">
+          <span>Swagger API</span>
+          <i data-lucide="external-link" class="w-3 h-3"></i>
+        </a>
+      </div>
+    </div>
+  </div>
 
   <!-- Header -->
-  <header class="gradient-header text-white shadow-lg sticky top-0 z-50">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
+  <header class="bg-white/80 backdrop-blur-md border-b border-slate-200/80 sticky top-0 z-40 shadow-xs">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex items-center justify-between">
       <div class="flex items-center space-x-3">
-        <div class="w-10 h-10 rounded-xl bg-emerald-500/20 border border-emerald-400/40 flex items-center justify-center">
-          <i data-lucide="sparkles" class="w-5 h-5 text-emerald-400"></i>
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 via-indigo-500 to-emerald-400 flex items-center justify-center shadow-md shadow-indigo-500/20">
+          <i data-lucide="sparkles" class="w-5 h-5 text-white"></i>
         </div>
         <div>
           <div class="flex items-center space-x-2">
-            <h1 class="text-xl font-bold tracking-tight">CrowdPulse</h1>
-            <span class="px-2 py-0.5 text-xs font-semibold bg-emerald-500/20 text-emerald-300 rounded-full border border-emerald-500/30">ML Powered</span>
+            <span class="text-xl font-extrabold tracking-tight text-slate-900">Crowd<span class="text-indigo-600">Pulse</span></span>
+            <span class="px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider bg-emerald-50 text-emerald-700 rounded-full border border-emerald-200">v1.2 Live</span>
           </div>
-          <p class="text-xs text-slate-300">Crowdfunding Success Predictor & Pre-Launch Decision Support</p>
+          <p class="text-[11px] text-slate-500 font-medium">Kickstarter Predictive Advisor · Zero-Leakage Architecture</p>
         </div>
       </div>
-      <div class="flex items-center space-x-2 text-xs">
-        <div class="flex items-center space-x-1.5 bg-slate-800/80 px-2.5 py-1.5 rounded-lg border border-slate-700">
-          <span id="backendDot" class="w-2 h-2 rounded-full bg-emerald-400"></span>
-          <span id="backendText" class="text-slate-300">System: Online</span>
-        </div>
-        <a id="swaggerLink" href="/docs" target="_blank" class="px-3 py-1.5 bg-white/10 hover:bg-white/20 transition rounded-lg text-white font-medium flex items-center space-x-1.5 border border-white/10">
-          <i data-lucide="file-code" class="w-3.5 h-3.5"></i>
-          <span>Swagger API</span>
+
+      <!-- Action items -->
+      <div class="flex items-center space-x-2">
+        <button onclick="copyShareReport()" class="hidden md:inline-flex items-center space-x-1.5 px-3 py-1.5 text-xs font-semibold text-slate-700 hover:text-slate-900 bg-slate-100 hover:bg-slate-200/80 rounded-lg transition border border-slate-200 cursor-pointer">
+          <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+          <span>Copy AI Report</span>
+        </button>
+        <a href="https://github.com/Mihir1234567/AIML_Sem1_Project" target="_blank" class="inline-flex items-center space-x-1.5 px-3 py-1.5 text-xs font-semibold text-white bg-slate-900 hover:bg-slate-800 rounded-lg transition shadow-xs">
+          <i data-lucide="github" class="w-3.5 h-3.5"></i>
+          <span>GitHub</span>
         </a>
       </div>
     </div>
   </header>
 
-  <!-- Main Content -->
+  <!-- Main Content Layout (Bento Grid) -->
   <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
 
-    <!-- Quick Preset Cards -->
-    <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200">
-      <div class="flex items-center justify-between mb-2">
-        <span class="text-xs font-semibold uppercase tracking-wider text-slate-500 flex items-center">
-          <i data-lucide="zap" class="w-3.5 h-3.5 mr-1 text-amber-500"></i> Instant Presets (Click to Test)
+    <!-- Preset Carousel Chips -->
+    <div class="bg-white rounded-2xl p-4 shadow-bento border border-slate-200/80">
+      <div class="flex items-center justify-between mb-2.5">
+        <span class="text-[11px] font-bold uppercase tracking-wider text-slate-500 flex items-center">
+          <i data-lucide="zap" class="w-3.5 h-3.5 mr-1.5 text-amber-500 fill-amber-500"></i> Interactive Presets (1-Click Evaluation)
         </span>
+        <span class="text-[11px] text-slate-400">Click any card to populate real campaign data</span>
       </div>
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-2.5">
-        <button onclick="loadPreset('game')" class="p-2.5 rounded-xl border border-slate-200 hover:border-emerald-500 hover:bg-emerald-50/40 text-left transition text-xs group">
-          <div class="font-bold text-slate-800 group-hover:text-emerald-700 flex items-center justify-between">
-            <span>🎮 Indie Rogue Game</span>
-            <span class="text-emerald-600 font-medium">$12K</span>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+        
+        <button type="button" onclick="loadPreset('game')" class="p-3 rounded-xl border border-slate-200 hover:border-indigo-400 hover:bg-indigo-50/30 text-left transition duration-200 group cursor-pointer">
+          <div class="flex items-center justify-between text-xs font-bold text-slate-800 group-hover:text-indigo-600">
+            <span class="flex items-center"><span class="mr-1.5 text-sm">🎮</span> Board Game</span>
+            <span class="text-emerald-600 font-mono">$12,000</span>
           </div>
-          <div class="text-slate-500 text-[11px] truncate">Games · 30 Days</div>
+          <div class="text-[11px] text-slate-500 mt-0.5 truncate">Games · 30 Days · US</div>
         </button>
 
-        <button onclick="loadPreset('iot')" class="p-2.5 rounded-xl border border-slate-200 hover:border-emerald-500 hover:bg-emerald-50/40 text-left transition text-xs group">
-          <div class="font-bold text-slate-800 group-hover:text-emerald-700 flex items-center justify-between">
-            <span>⚡ Smart IoT Gadget</span>
-            <span class="text-rose-600 font-medium">$75K</span>
+        <button type="button" onclick="loadPreset('iot')" class="p-3 rounded-xl border border-slate-200 hover:border-indigo-400 hover:bg-indigo-50/30 text-left transition duration-200 group cursor-pointer">
+          <div class="flex items-center justify-between text-xs font-bold text-slate-800 group-hover:text-indigo-600">
+            <span class="flex items-center"><span class="mr-1.5 text-sm">⚡</span> Smart IoT Hub</span>
+            <span class="text-rose-600 font-mono">$75,000</span>
           </div>
-          <div class="text-slate-500 text-[11px] truncate">Technology · 45 Days</div>
+          <div class="text-[11px] text-slate-500 mt-0.5 truncate">Technology · 45 Days · US</div>
         </button>
 
-        <button onclick="loadPreset('comic')" class="p-2.5 rounded-xl border border-slate-200 hover:border-emerald-500 hover:bg-emerald-50/40 text-left transition text-xs group">
-          <div class="font-bold text-slate-800 group-hover:text-emerald-700 flex items-center justify-between">
-            <span>📚 Hardcover Art Book</span>
-            <span class="text-emerald-600 font-medium">$4.5K</span>
+        <button type="button" onclick="loadPreset('comic')" class="p-3 rounded-xl border border-slate-200 hover:border-indigo-400 hover:bg-indigo-50/30 text-left transition duration-200 group cursor-pointer">
+          <div class="flex items-center justify-between text-xs font-bold text-slate-800 group-hover:text-indigo-600">
+            <span class="flex items-center"><span class="mr-1.5 text-sm">📚</span> Art Anthology</span>
+            <span class="text-emerald-600 font-mono">$4,500</span>
           </div>
-          <div class="text-slate-500 text-[11px] truncate">Publishing · 25 Days</div>
+          <div class="text-[11px] text-slate-500 mt-0.5 truncate">Publishing · 25 Days · US</div>
         </button>
 
-        <button onclick="loadPreset('film')" class="p-2.5 rounded-xl border border-slate-200 hover:border-emerald-500 hover:bg-emerald-50/40 text-left transition text-xs group">
-          <div class="font-bold text-slate-800 group-hover:text-emerald-700 flex items-center justify-between">
-            <span>🎬 Sci-Fi Indie Short</span>
-            <span class="text-amber-600 font-medium">$28K</span>
+        <button type="button" onclick="loadPreset('film')" class="p-3 rounded-xl border border-slate-200 hover:border-indigo-400 hover:bg-indigo-50/30 text-left transition duration-200 group cursor-pointer">
+          <div class="flex items-center justify-between text-xs font-bold text-slate-800 group-hover:text-indigo-600">
+            <span class="flex items-center"><span class="mr-1.5 text-sm">🎬</span> Sci-Fi Short</span>
+            <span class="text-amber-600 font-mono">$28,000</span>
           </div>
-          <div class="text-slate-500 text-[11px] truncate">Film & Video · 35 Days</div>
+          <div class="text-[11px] text-slate-500 mt-0.5 truncate">Film & Video · 35 Days · GB</div>
         </button>
+
       </div>
     </div>
 
-    <!-- Grid Container -->
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+    <!-- Main Bento Grid (12 Columns) -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
 
-      <!-- Left Column: Input Form (5 cols) -->
-      <div class="lg:col-span-5 bg-white rounded-2xl shadow-sm border border-slate-200 p-6 space-y-5">
-        <div class="border-b border-slate-100 pb-3 flex items-center justify-between">
+      <!-- LEFT: Configuration Console (5 Columns) -->
+      <div class="lg:col-span-5 bg-white rounded-2xl p-6 shadow-bento border border-slate-200/80 space-y-5">
+        
+        <div class="flex items-center justify-between border-b border-slate-100 pb-3">
           <div>
             <h2 class="text-base font-bold text-slate-900 flex items-center">
-              <i data-lucide="sliders" class="w-4 h-4 mr-2 text-indigo-600"></i> Campaign Configuration
+              <i data-lucide="sliders-horizontal" class="w-4 h-4 mr-2 text-indigo-600"></i>
+              Campaign Architect
             </h2>
-            <p class="text-xs text-slate-500">All features are known strictly before campaign launch.</p>
+            <p class="text-xs text-slate-500">Fine-tune pre-launch parameters</p>
           </div>
-          <span class="text-[10px] font-semibold uppercase px-2 py-0.5 rounded bg-slate-100 text-slate-600 border">Zero Leakage</span>
+          <div class="flex items-center space-x-1.5 bg-indigo-50 px-2 py-1 rounded-md text-[11px] text-indigo-700 font-semibold">
+            <span class="w-1.5 h-1.5 rounded-full bg-indigo-600"></span>
+            <span>Live Sync</span>
+          </div>
         </div>
 
         <form id="predictionForm" class="space-y-4" onsubmit="event.preventDefault(); runPrediction();">
+          
           <!-- Title -->
           <div>
-            <label class="block text-xs font-semibold text-slate-700 mb-1" for="titleInput">
-              Project Title
+            <label for="titleInput" class="block text-xs font-bold text-slate-700 mb-1">
+              Campaign Title
             </label>
-            <input type="text" id="titleInput" required
-              value="The Odyssey: Strategic Deckbuilding Board Game"
-              class="w-full px-3.5 py-2.5 text-sm border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition"
-              placeholder="e.g. Ergonomic Split Mechanical Keyboard"
-              oninput="updateTitleStats()">
+            <div class="relative">
+              <input type="text" id="titleInput" required
+                value="The Odyssey: Strategic Deckbuilding Board Game"
+                class="w-full px-3.5 py-2.5 text-sm bg-slate-50 border border-slate-300 rounded-xl focus:bg-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-150"
+                placeholder="e.g. Ergonomic Split Mechanical Keyboard"
+                oninput="onInputChange()">
+            </div>
             <div class="flex items-center justify-between mt-1 text-[11px] text-slate-400">
-              <span id="titleCounter">48 chars · 6 words</span>
-              <span id="titleWarning" class="text-amber-600 hidden font-medium">Warning: ALL CAPS detected</span>
+              <span id="titleCounter" class="font-mono">48 chars · 6 words</span>
+              <span id="titleWarning" class="text-amber-600 hidden font-semibold flex items-center">
+                <i data-lucide="alert-triangle" class="w-3 h-3 mr-1"></i> Avoid ALL CAPS
+              </span>
             </div>
           </div>
 
           <!-- Category and Country -->
           <div class="grid grid-cols-2 gap-3">
             <div>
-              <label class="block text-xs font-semibold text-slate-700 mb-1" for="categorySelect">
-                Main Category
+              <label for="categorySelect" class="block text-xs font-bold text-slate-700 mb-1">
+                Category
               </label>
-              <select id="categorySelect" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 transition bg-white">
+              <select id="categorySelect" onchange="onInputChange()" class="w-full px-3 py-2 text-sm bg-slate-50 border border-slate-300 rounded-xl focus:bg-white focus:ring-2 focus:ring-indigo-500 transition cursor-pointer">
                 <option value="Games" selected>Games</option>
                 <option value="Technology">Technology</option>
                 <option value="Design">Design</option>
@@ -178,11 +242,12 @@
                 <option value="Dance">Dance</option>
               </select>
             </div>
+
             <div>
-              <label class="block text-xs font-semibold text-slate-700 mb-1" for="countrySelect">
-                Country
+              <label for="countrySelect" class="block text-xs font-bold text-slate-700 mb-1">
+                Market / Country
               </label>
-              <select id="countrySelect" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 transition bg-white">
+              <select id="countrySelect" onchange="onInputChange()" class="w-full px-3 py-2 text-sm bg-slate-50 border border-slate-300 rounded-xl focus:bg-white focus:ring-2 focus:ring-indigo-500 transition cursor-pointer">
                 <option value="US" selected>United States (US)</option>
                 <option value="GB">United Kingdom (GB)</option>
                 <option value="CA">Canada (CA)</option>
@@ -199,51 +264,59 @@
             </div>
           </div>
 
-          <!-- Funding Goal ($) -->
-          <div>
-            <div class="flex items-center justify-between mb-1">
-              <label class="text-xs font-semibold text-slate-700" for="goalInput">Funding Goal (USD $)</label>
-              <span id="goalDisplay" class="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">$12,000</span>
+          <!-- Funding Goal Section -->
+          <div class="space-y-2 bg-slate-50/80 p-3.5 rounded-xl border border-slate-200">
+            <div class="flex items-center justify-between">
+              <label for="goalInput" class="text-xs font-bold text-slate-700">Target Goal (USD)</label>
+              <span id="goalDisplay" class="text-xs font-bold font-mono text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded border border-indigo-200">$12,000</span>
             </div>
+
             <div class="relative">
               <span class="absolute left-3.5 top-2.5 text-slate-400 font-bold text-sm">$</span>
               <input type="number" id="goalInput" min="500" max="1000000" step="500" value="12000"
-                class="w-full pl-8 pr-3.5 py-2 text-sm border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 transition"
-                oninput="syncGoalSlider(this.value)">
+                class="w-full pl-8 pr-3.5 py-2 text-sm bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 font-mono font-medium"
+                oninput="syncGoalSlider(this.value); onInputChange();">
             </div>
+
+            <!-- Quick Jump Chips -->
+            <div class="flex items-center space-x-1.5 pt-1">
+              <span class="text-[10px] text-slate-400 font-medium">Quick:</span>
+              <button type="button" onclick="setGoal(5000)" class="px-2 py-0.5 text-[10px] font-mono font-semibold rounded bg-white hover:bg-indigo-50 hover:text-indigo-600 border border-slate-200 transition cursor-pointer">$5k</button>
+              <button type="button" onclick="setGoal(12000)" class="px-2 py-0.5 text-[10px] font-mono font-semibold rounded bg-white hover:bg-indigo-50 hover:text-indigo-600 border border-slate-200 transition cursor-pointer">$12k</button>
+              <button type="button" onclick="setGoal(25000)" class="px-2 py-0.5 text-[10px] font-mono font-semibold rounded bg-white hover:bg-indigo-50 hover:text-indigo-600 border border-slate-200 transition cursor-pointer">$25k</button>
+              <button type="button" onclick="setGoal(50000)" class="px-2 py-0.5 text-[10px] font-mono font-semibold rounded bg-white hover:bg-indigo-50 hover:text-indigo-600 border border-slate-200 transition cursor-pointer">$50k</button>
+            </div>
+
             <input type="range" id="goalSlider" min="1000" max="100000" step="1000" value="12000"
-              class="w-full mt-2 accent-emerald-600 cursor-pointer"
-              oninput="syncGoalInput(this.value)">
-            <div class="flex justify-between text-[10px] text-slate-400 mt-0.5">
-              <span>$1,000</span>
-              <span>$50,000</span>
-              <span>$100,000</span>
-            </div>
+              class="w-full accent-indigo-600 cursor-pointer mt-1"
+              oninput="syncGoalInput(this.value); onInputChange();">
           </div>
 
-          <!-- Duration (Days) -->
-          <div>
-            <div class="flex items-center justify-between mb-1">
-              <label class="text-xs font-semibold text-slate-700" for="durationSlider">Campaign Duration</label>
-              <span id="durationDisplay" class="text-xs font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded border border-indigo-200">30 Days</span>
+          <!-- Campaign Duration Section -->
+          <div class="space-y-2 bg-slate-50/80 p-3.5 rounded-xl border border-slate-200">
+            <div class="flex items-center justify-between">
+              <label for="durationSlider" class="text-xs font-bold text-slate-700">Duration (Days)</label>
+              <span id="durationDisplay" class="text-xs font-bold font-mono text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded border border-indigo-200">30 Days</span>
             </div>
+
             <input type="range" id="durationSlider" min="7" max="60" step="1" value="30"
               class="w-full accent-indigo-600 cursor-pointer"
-              oninput="syncDuration(this.value)">
-            <div class="flex justify-between text-[10px] text-slate-400 mt-0.5">
-              <span>7 days</span>
-              <span>30 days (Sweet Spot)</span>
-              <span>60 days</span>
+              oninput="syncDuration(this.value); onInputChange();">
+
+            <div class="flex justify-between text-[10px] text-slate-400 font-medium">
+              <span>7 Days (Sprint)</span>
+              <span class="text-indigo-600 font-bold">30 Days (Optimal)</span>
+              <span>60 Days (Max)</span>
             </div>
           </div>
 
-          <!-- Timing Options -->
+          <!-- Timing Pickers -->
           <div class="grid grid-cols-2 gap-3 pt-1">
             <div>
-              <label class="block text-xs font-semibold text-slate-700 mb-1" for="monthSelect">
+              <label for="monthSelect" class="block text-xs font-bold text-slate-700 mb-1">
                 Launch Month
               </label>
-              <select id="monthSelect" class="w-full px-3 py-1.5 text-xs border border-slate-300 rounded-lg bg-white">
+              <select id="monthSelect" onchange="onInputChange()" class="w-full px-3 py-1.5 text-xs bg-slate-50 border border-slate-300 rounded-lg cursor-pointer">
                 <option value="1">January</option>
                 <option value="2">February</option>
                 <option value="3">March</option>
@@ -255,46 +328,49 @@
                 <option value="9">September</option>
                 <option value="10" selected>October (Peak)</option>
                 <option value="11">November</option>
-                <option value="12">December (Holidays)</option>
+                <option value="12">December</option>
               </select>
             </div>
+
             <div>
-              <label class="block text-xs font-semibold text-slate-700 mb-1" for="daySelect">
-                Launch Day
+              <label for="daySelect" class="block text-xs font-bold text-slate-700 mb-1">
+                Launch Day of Week
               </label>
-              <select id="daySelect" class="w-full px-3 py-1.5 text-xs border border-slate-300 rounded-lg bg-white">
+              <select id="daySelect" onchange="onInputChange()" class="w-full px-3 py-1.5 text-xs bg-slate-50 border border-slate-300 rounded-lg cursor-pointer">
                 <option value="0">Monday</option>
-                <option value="1" selected>Tuesday (Optimal)</option>
+                <option value="1" selected>Tuesday (Top Performer)</option>
                 <option value="2">Wednesday</option>
                 <option value="3">Thursday</option>
                 <option value="4">Friday</option>
-                <option value="5">Saturday (Weekend)</option>
-                <option value="6">Sunday (Weekend)</option>
+                <option value="5">Saturday</option>
+                <option value="6">Sunday</option>
               </select>
             </div>
           </div>
 
-          <!-- Submit Button -->
+          <!-- Evaluate Button -->
           <button type="submit" id="submitBtn"
-            class="w-full py-3 px-4 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl shadow-md hover:shadow-lg transition transform active:scale-[0.98] flex items-center justify-center space-x-2">
-            <i data-lucide="play" class="w-4 h-4 fill-white"></i>
-            <span>Run AI Prediction & Simulation</span>
+            class="w-full py-3.5 px-4 bg-gradient-to-r from-indigo-600 via-indigo-600 to-emerald-600 hover:from-indigo-700 hover:to-emerald-700 text-white font-bold rounded-xl shadow-md hover:shadow-lg transition transform active:scale-[0.99] flex items-center justify-center space-x-2 cursor-pointer">
+            <i data-lucide="sparkles" class="w-4 h-4"></i>
+            <span>Calculate AI Probability & Advice</span>
           </button>
+
         </form>
+
       </div>
 
-      <!-- Right Column: Results & Advisory (7 cols) -->
+      <!-- RIGHT: Analytics & Strategy Bento Grid (7 Columns) -->
       <div class="lg:col-span-7 space-y-6">
 
-        <!-- Probability & Verdict Card -->
-        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 relative overflow-hidden">
+        <!-- BENTO 1: Probability Hero Scorecard -->
+        <div class="bg-white rounded-2xl p-6 shadow-bento border border-slate-200/80 relative overflow-hidden">
           <div class="flex flex-col sm:flex-row items-center justify-between gap-6">
-            
-            <!-- Gauge / Donut Graphic -->
+
+            <!-- Circular Gauge -->
             <div class="relative w-44 h-44 flex-shrink-0 flex items-center justify-center">
               <canvas id="gaugeCanvas" class="w-full h-full"></canvas>
               <div class="absolute inset-0 flex flex-col items-center justify-center text-center">
-                <span id="probValue" class="text-3xl font-extrabold text-slate-900 tracking-tight">--%</span>
+                <span id="probValue" class="text-3xl font-extrabold font-mono text-slate-900 tracking-tight">--%</span>
                 <span class="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Success Chance</span>
               </div>
             </div>
@@ -303,96 +379,151 @@
             <div class="flex-grow space-y-3 text-center sm:text-left">
               <div class="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full text-xs font-bold" id="badgeContainer">
                 <span class="w-2 h-2 rounded-full" id="statusDot"></span>
-                <span id="verdictText">Awaiting input...</span>
+                <span id="verdictText">Analyzing Campaign...</span>
               </div>
 
               <div>
                 <h3 class="text-xl font-extrabold text-slate-900" id="summaryHeader">Ready to Evaluate</h3>
-                <p class="text-xs text-slate-500 mt-0.5" id="riskDetail">Configure parameters and click "Run AI Prediction".</p>
+                <p class="text-xs text-slate-500 mt-0.5" id="riskDetail">Calculated from 10 non-leaking pre-launch attributes.</p>
               </div>
 
-              <!-- Mini Stats -->
-              <div class="grid grid-cols-2 gap-2 pt-2 text-xs">
-                <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-200">
-                  <span class="text-slate-400 block text-[10px] font-semibold uppercase">Decision Threshold</span>
-                  <span class="font-bold text-slate-800">50.0% Probability</span>
+              <!-- 3 Micro-KPIs -->
+              <div class="grid grid-cols-3 gap-2 pt-2 text-xs">
+                <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80">
+                  <span class="text-slate-400 block text-[9px] font-bold uppercase tracking-wider">Hurdle Index</span>
+                  <span id="kpiHurdle" class="font-bold text-slate-800 font-mono text-xs">Moderate</span>
                 </div>
-                <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-200">
-                  <span class="text-slate-400 block text-[10px] font-semibold uppercase">Confidence Band</span>
-                  <span class="font-bold text-slate-800" id="confidenceBand">Calibrated</span>
+                <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80">
+                  <span class="text-slate-400 block text-[9px] font-bold uppercase tracking-wider">Pace Viability</span>
+                  <span id="kpiPace" class="font-bold text-slate-800 font-mono text-xs">Optimal</span>
+                </div>
+                <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80">
+                  <span class="text-slate-400 block text-[9px] font-bold uppercase tracking-wider">Title Quality</span>
+                  <span id="kpiTitle" class="font-bold text-slate-800 font-mono text-xs">Descriptive</span>
                 </div>
               </div>
+
             </div>
 
           </div>
         </div>
 
-        <!-- Smart Campaign Advisor -->
-        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 space-y-3">
-          <div class="flex items-center justify-between border-b border-slate-100 pb-2">
-            <h3 class="text-sm font-bold text-slate-900 flex items-center">
-              <i data-lucide="compass" class="w-4 h-4 mr-1.5 text-emerald-600"></i> AI Strategic Recommendations
-            </h3>
-            <span class="text-[11px] text-slate-400">Heuristic + Tree Gradient Insights</span>
+        <!-- BENTO 2: AI Strategic Recommendations -->
+        <div class="bg-white rounded-2xl p-6 shadow-bento border border-slate-200/80 space-y-3">
+          <div class="flex items-center justify-between border-b border-slate-100 pb-2.5">
+            <div class="flex items-center space-x-2">
+              <div class="w-7 h-7 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center">
+                <i data-lucide="compass" class="w-4 h-4"></i>
+              </div>
+              <h3 class="text-sm font-bold text-slate-900">AI Strategic Recommendations</h3>
+            </div>
+            <button onclick="copyShareReport()" class="text-xs font-semibold text-indigo-600 hover:text-indigo-800 flex items-center space-x-1 cursor-pointer">
+              <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+              <span>Copy</span>
+            </button>
           </div>
-          <ul id="adviceList" class="space-y-2 text-xs text-slate-600">
-            <li class="p-3 bg-slate-50 rounded-xl border border-slate-200 flex items-start space-x-2">
+
+          <ul id="adviceList" class="space-y-2.5 text-xs text-slate-600">
+            <li class="p-3 bg-slate-50 rounded-xl border border-slate-200/80 flex items-start space-x-2.5">
               <i data-lucide="info" class="w-4 h-4 text-slate-400 mt-0.5 flex-shrink-0"></i>
-              <span>Select an instant preset or click "Run AI Prediction" to generate real-time feedback.</span>
+              <span>Adjust parameters or pick a preset above to generate live strategic advice.</span>
             </li>
           </ul>
         </div>
 
-        <!-- Sweet Spot Sensitivity Simulation Chart -->
-        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 space-y-3">
-          <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+        <!-- BENTO 3: Interactive Sweet-Spot Sensitivity Graph -->
+        <div class="bg-white rounded-2xl p-6 shadow-bento border border-slate-200/80 space-y-3">
+          <div class="flex items-center justify-between border-b border-slate-100 pb-2.5">
             <div>
-              <h3 class="text-sm font-bold text-slate-900 flex items-center">
-                <i data-lucide="trending-up" class="w-4 h-4 mr-1.5 text-indigo-600"></i> Goal Sensitivity Curve (Sweet Spot Explorer)
-              </h3>
-              <p class="text-[11px] text-slate-500">How success probability decays as your funding goal increases.</p>
+              <div class="flex items-center space-x-2">
+                <div class="w-7 h-7 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center">
+                  <i data-lucide="trending-up" class="w-4 h-4"></i>
+                </div>
+                <h3 class="text-sm font-bold text-slate-900">Goal Sensitivity & Sweet Spot Curve</h3>
+              </div>
+              <p class="text-[11px] text-slate-500 mt-0.5">Live simulation mapping target funding to expected probability decay</p>
             </div>
-            <span class="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">Dynamic Sweep</span>
+            <span class="text-[10px] font-mono font-bold text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded border border-indigo-200">2D Grid Sweep</span>
           </div>
+
           <div class="relative h-56 w-full">
             <canvas id="simulationChart"></canvas>
           </div>
         </div>
 
       </div>
+
     </div>
 
-    <!-- Methodology & Model Card Footer -->
-    <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 text-xs text-slate-600 space-y-3">
-      <h4 class="font-bold text-slate-900 text-sm flex items-center">
-        <i data-lucide="shield-check" class="w-4 h-4 mr-1.5 text-emerald-600"></i> Strict Machine Learning Methodology
-      </h4>
+    <!-- Methodology & System Architecture Card -->
+    <div class="bg-white rounded-2xl p-6 shadow-bento border border-slate-200/80 space-y-4 text-xs text-slate-600">
+      <div class="flex items-center justify-between">
+        <h4 class="font-bold text-slate-900 text-sm flex items-center">
+          <i data-lucide="shield-check" class="w-4 h-4 mr-2 text-emerald-600"></i>
+          Rigorous Machine Learning Validation Architecture
+        </h4>
+        <span class="text-[11px] font-mono text-slate-400">Trained on 48,000 campaigns · Validated on 12,000</span>
+      </div>
+
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-[11px]">
-        <div class="p-3 bg-slate-50 rounded-xl border border-slate-200">
-          <strong class="text-slate-800 block mb-1">1. Anti-Leakage Guarantee</strong>
-          Pledged amounts, backer tallies, and live campaign states were strictly excluded prior to modeling. Only pre-launch decisions are utilized.
+        <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200/80 space-y-1">
+          <strong class="text-slate-900 flex items-center font-bold">
+            <i data-lucide="lock" class="w-3.5 h-3.5 mr-1.5 text-indigo-600"></i> Zero Target Leakage
+          </strong>
+          <p class="text-slate-500 leading-relaxed">
+            Strictly drops variables created post-launch (<code class="bg-slate-200 px-1 py-0.5 rounded text-[10px]">pledged</code>, <code class="bg-slate-200 px-1 py-0.5 rounded text-[10px]">backers</code>). Models only pre-launch creator decisions.
+          </p>
         </div>
-        <div class="p-3 bg-slate-50 rounded-xl border border-slate-200">
-          <strong class="text-slate-800 block mb-1">2. FX Normalization</strong>
-          Goals recorded in international currencies (GBP, EUR, CAD, AUD, etc.) were normalized to real USD purchasing equivalents.
+
+        <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200/80 space-y-1">
+          <strong class="text-slate-900 flex items-center font-bold">
+            <i data-lucide="dollar-sign" class="w-3.5 h-3.5 mr-1.5 text-emerald-600"></i> FX Normalization
+          </strong>
+          <p class="text-slate-500 leading-relaxed">
+            Standardizes 13 international currencies (GBP, EUR, CAD, AUD) into purchasing-power equivalent real USD prior to log transformation.
+          </p>
         </div>
-        <div class="p-3 bg-slate-50 rounded-xl border border-slate-200">
-          <strong class="text-slate-800 block mb-1">3. Evaluated on Unseen Data</strong>
-          Models were benchmarked against 12,000 stratified holdout campaigns, achieving a test ROC-AUC of 0.718 across diverse categories.
+
+        <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200/80 space-y-1">
+          <strong class="text-slate-900 flex items-center font-bold">
+            <i data-lucide="git-merge" class="w-3.5 h-3.5 mr-1.5 text-amber-600"></i> Scikit-Learn Pipeline
+          </strong>
+          <p class="text-slate-500 leading-relaxed">
+            Encapsulates <code class="bg-slate-200 px-1 py-0.5 rounded text-[10px]">StandardScaler</code> and <code class="bg-slate-200 px-1 py-0.5 rounded text-[10px]">OneHotEncoder</code> within a single native estimator to eliminate data snooping.
+          </p>
         </div>
       </div>
     </div>
 
   </main>
 
-  <footer class="mt-auto py-4 border-t border-slate-200 text-center text-xs text-slate-500">
-    <p>CrowdPulse &copy; 2026 · Applied Machine Learning Capstone · Built with FastAPI & Scikit-Learn</p>
+  <!-- Footer -->
+  <footer class="mt-auto py-5 bg-white border-t border-slate-200 text-center text-xs text-slate-500">
+    <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
+      <p>CrowdPulse &copy; 2026 · Applied Machine Learning Decision Support System</p>
+      <div class="flex items-center space-x-3 text-slate-400">
+        <a href="/docs" target="_blank" class="hover:text-slate-600 transition">Swagger API</a>
+        <span>·</span>
+        <a href="/api/health" target="_blank" class="hover:text-slate-600 transition">Health Status</a>
+        <span>·</span>
+        <a href="https://github.com/Mihir1234567/AIML_Sem1_Project" target="_blank" class="hover:text-slate-600 transition">GitHub Repo</a>
+      </div>
+    </div>
   </footer>
+
+  <!-- Toast Notification Container -->
+  <div id="toastContainer" class="fixed bottom-5 right-5 z-50 pointer-events-none"></div>
 
   <!-- Application Logic -->
   <script>
-    // Initialize Lucide Icons
+    // Initialize Icons
     lucide.createIcons();
+
+    // Chart instances
+    let gaugeChart = null;
+    let simChart = null;
+    let debounceTimer = null;
+    let lastResult = null;
 
     // Backend API URL resolver
     function getApiBaseUrl() {
@@ -401,7 +532,7 @@
 
       const host = window.location.hostname;
       const port = window.location.port;
-      // If dev server runs on another port (e.g., Live Server on 5500)
+      // If dev server runs on another port (e.g. Live Server on 5500)
       if ((host === 'localhost' || host === '127.0.0.1') && port && port !== '8000') {
         return 'http://127.0.0.1:8000';
       }
@@ -413,8 +544,6 @@
       const base = getApiBaseUrl();
       const dot = document.getElementById('backendDot');
       const text = document.getElementById('backendText');
-      const swagger = document.getElementById('swaggerLink');
-      if (swagger) swagger.href = `${base}/docs`;
 
       try {
         const controller = new AbortController();
@@ -435,10 +564,6 @@
       }
     }
 
-    // Chart instances
-    let gaugeChart = null;
-    let simChart = null;
-
     // Presets
     const presets = {
       game: {
@@ -451,7 +576,7 @@
         day: 1
       },
       iot: {
-        title: "NEXTGEN ULTRA SMART IOT HOME AUTOMATION SYSTEM",
+        title: "NEXTGEN ULTRA SMART IOT HOME AUTOMATION HUB",
         category: "Technology",
         country: "US",
         goal: 75000,
@@ -485,9 +610,7 @@
       document.getElementById('titleInput').value = p.title;
       document.getElementById('categorySelect').value = p.category;
       document.getElementById('countrySelect').value = p.country;
-      document.getElementById('goalInput').value = p.goal;
-      document.getElementById('goalSlider').value = p.goal;
-      document.getElementById('goalDisplay').innerText = `$${Number(p.goal).toLocaleString()}`;
+      setGoal(p.goal);
       document.getElementById('durationSlider').value = p.duration;
       document.getElementById('durationDisplay').innerText = `${p.duration} Days`;
       document.getElementById('monthSelect').value = p.month;
@@ -495,6 +618,12 @@
 
       updateTitleStats();
       runPrediction();
+      showToast(`Loaded ${p.category} preset`);
+    }
+
+    function setGoal(val) {
+      document.getElementById('goalInput').value = val;
+      syncGoalSlider(val);
     }
 
     function syncGoalSlider(val) {
@@ -526,6 +655,15 @@
       }
     }
 
+    // Debounced automatic evaluation when user adjusts inputs
+    function onInputChange() {
+      updateTitleStats();
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(() => {
+        runPrediction();
+      }, 400);
+    }
+
     // Initialize Gauge Chart
     function initGauge() {
       const ctx = document.getElementById('gaugeCanvas').getContext('2d');
@@ -534,7 +672,7 @@
         data: {
           datasets: [{
             data: [0, 100],
-            backgroundColor: ['#22c55e', '#e2e8f0'],
+            backgroundColor: ['#6366f1', '#f1f5f9'],
             borderWidth: 0,
             circumference: 270,
             rotation: 225
@@ -560,18 +698,19 @@
           labels: [],
           datasets: [
             {
-              label: 'Predicted Success Probability (%)',
+              label: 'Success Probability (%)',
               data: [],
               borderColor: '#6366f1',
-              backgroundColor: 'rgba(99, 102, 241, 0.1)',
+              backgroundColor: 'rgba(99, 102, 241, 0.08)',
               fill: true,
               tension: 0.35,
-              borderWidth: 2.5,
+              borderWidth: 3,
               pointRadius: 3,
-              pointHoverRadius: 6
+              pointHoverRadius: 6,
+              pointBackgroundColor: '#6366f1'
             },
             {
-              label: '50% Viability Threshold',
+              label: '50% Break-Even Viability',
               data: [],
               borderColor: '#ef4444',
               borderDash: [5, 5],
@@ -584,27 +723,34 @@
         options: {
           responsive: true,
           maintainAspectRatio: false,
+          interaction: {
+            mode: 'index',
+            intersect: false
+          },
           plugins: {
             legend: {
               position: 'top',
-              labels: { boxWidth: 12, font: { size: 10 } }
+              labels: { 
+                boxWidth: 12, 
+                font: { family: 'Plus Jakarta Sans', size: 10, weight: 600 } 
+              }
             },
             tooltip: {
               callbacks: {
-                label: (ctx) => `${ctx.dataset.label}: ${ctx.parsed.y}%`
+                label: (ctx) => ` ${ctx.dataset.label}: ${ctx.parsed.y}%`
               }
             }
           },
           scales: {
             x: {
               grid: { display: false },
-              ticks: { font: { size: 10 } }
+              ticks: { font: { family: 'Fira Code', size: 10 } }
             },
             y: {
               min: 0,
               max: 100,
               ticks: {
-                font: { size: 10 },
+                font: { family: 'Fira Code', size: 10 },
                 callback: (v) => `${v}%`
               }
             }
@@ -616,8 +762,7 @@
     // Execute Prediction & Simulation via API
     async function runPrediction() {
       const submitBtn = document.getElementById('submitBtn');
-      submitBtn.disabled = true;
-      submitBtn.classList.add('opacity-75');
+      if (submitBtn) submitBtn.classList.add('opacity-80');
 
       const baseUrl = getApiBaseUrl();
 
@@ -625,10 +770,10 @@
         title: document.getElementById('titleInput').value.trim(),
         main_category: document.getElementById('categorySelect').value,
         country: document.getElementById('countrySelect').value,
-        usd_goal: parseFloat(document.getElementById('goalInput').value),
-        duration_days: parseFloat(document.getElementById('durationSlider').value),
-        launch_month: parseInt(document.getElementById('monthSelect').value),
-        launch_day_of_week: parseInt(document.getElementById('daySelect').value)
+        usd_goal: parseFloat(document.getElementById('goalInput').value) || 1000,
+        duration_days: parseFloat(document.getElementById('durationSlider').value) || 30,
+        launch_month: parseInt(document.getElementById('monthSelect').value) || 10,
+        launch_day_of_week: parseInt(document.getElementById('daySelect').value) || 1
       };
 
       try {
@@ -641,14 +786,15 @@
 
         if (!res.ok) throw new Error(`Server returned ${res.status}`);
         const data = await res.json();
+        lastResult = data;
         renderPrediction(data);
 
-        // Update backend status to online if successful
+        // Update backend status to online
         const dot = document.getElementById('backendDot');
         const text = document.getElementById('backendText');
         if (dot && text) {
           dot.className = "w-2 h-2 rounded-full bg-emerald-400";
-          text.innerText = "Backend: Online";
+          text.innerText = "System: Online";
         }
 
         // 2. Simulation Call for Sweet Spot Curve
@@ -678,17 +824,11 @@
         const dot = document.getElementById('backendDot');
         const text = document.getElementById('backendText');
         if (dot && text) {
-          dot.className = "w-2 h-2 rounded-full bg-rose-400";
-          text.innerText = "Backend: Offline / Waking";
+          dot.className = "w-2 h-2 rounded-full bg-amber-400 animate-pulse";
+          text.innerText = "System: Reconnecting...";
         }
-        alert(
-          "⚠️ Could not reach the ML backend at: " + (baseUrl || window.location.origin) + "\n\n" +
-          "• If your backend is hosted on Render free tier, it sleeps after inactivity and takes ~45 seconds to spin up on the first visit.\n" +
-          "• If using a new Render URL, click the 'Backend' button in the top navigation bar to configure it."
-        );
       } finally {
-        submitBtn.disabled = false;
-        submitBtn.classList.remove('opacity-75');
+        if (submitBtn) submitBtn.classList.remove('opacity-80');
       }
     }
 
@@ -699,13 +839,16 @@
       // Gauge Update
       document.getElementById('probValue').innerText = `${pct}%`;
       const isSuccess = prob >= 0.50;
-      const color = isSuccess ? '#22c55e' : (prob >= 0.35 ? '#f59e0b' : '#ef4444');
+      let color = '#22c55e'; // Green
+      if (prob < 0.35) color = '#f43f5e'; // Rose
+      else if (prob < 0.50) color = '#f59e0b'; // Amber
+      else if (prob >= 0.70) color = '#10b981'; // Emerald
 
       gaugeChart.data.datasets[0].data = [pct, 100 - pct];
-      gaugeChart.data.datasets[0].backgroundColor = [color, '#e2e8f0'];
+      gaugeChart.data.datasets[0].backgroundColor = [color, '#f1f5f9'];
       gaugeChart.update();
 
-      // Verdict & Badge
+      // Verdict & Badges
       const badge = document.getElementById('badgeContainer');
       const dot = document.getElementById('statusDot');
       const verdict = document.getElementById('verdictText');
@@ -713,29 +856,52 @@
       const risk = document.getElementById('riskDetail');
 
       if (isSuccess) {
-        badge.className = "inline-flex items-center space-x-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200";
+        badge.className = "inline-flex items-center space-x-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-xs";
         dot.className = "w-2 h-2 rounded-full bg-emerald-500 animate-pulse";
         verdict.innerText = "PREDICTED: SUCCESSFUL";
         header.innerText = "Favorable Launch Outlook";
       } else {
-        badge.className = "inline-flex items-center space-x-1.5 px-3 py-1 rounded-full text-xs font-bold bg-rose-50 text-rose-700 border border-rose-200";
+        badge.className = "inline-flex items-center space-x-1.5 px-3 py-1 rounded-full text-xs font-bold bg-rose-50 text-rose-700 border border-rose-200 shadow-xs";
         dot.className = "w-2 h-2 rounded-full bg-rose-500";
         verdict.innerText = "PREDICTED: HIGH RISK OF FAILURE";
-        header.innerText = "Campaign Hurdles Detected";
+        header.innerText = "Sub-Optimal Launch Dynamics";
       }
 
       risk.innerText = `Classification: ${data.risk_level} · Model: ${data.model_name}`;
-      document.getElementById('confidenceBand').innerText = `${data.risk_level.split(' ')[0]} Risk`;
+
+      // Micro KPIs
+      const goalVal = data.usd_goal;
+      const durVal = data.duration_days;
+      
+      const hurdle = document.getElementById('kpiHurdle');
+      if (goalVal <= 10000) { hurdle.innerText = "Low Hurdle"; hurdle.className = "font-bold text-emerald-600 font-mono text-xs"; }
+      else if (goalVal <= 30000) { hurdle.innerText = "Moderate"; hurdle.className = "font-bold text-indigo-600 font-mono text-xs"; }
+      else { hurdle.innerText = "High Hurdle"; hurdle.className = "font-bold text-rose-600 font-mono text-xs"; }
+
+      const pace = document.getElementById('kpiPace');
+      if (durVal >= 25 && durVal <= 35) { pace.innerText = "Sweet Spot"; pace.className = "font-bold text-emerald-600 font-mono text-xs"; }
+      else if (durVal > 40) { pace.innerText = "Fatigue Risk"; pace.className = "font-bold text-rose-600 font-mono text-xs"; }
+      else { pace.innerText = "Sprint"; pace.className = "font-bold text-amber-600 font-mono text-xs"; }
+
+      const titleKpi = document.getElementById('kpiTitle');
+      const wordLen = data.title.split(/\s+/).length;
+      if (wordLen >= 4 && wordLen <= 9 && !data.title.includes('!')) {
+        titleKpi.innerText = "High Clarity";
+        titleKpi.className = "font-bold text-emerald-600 font-mono text-xs";
+      } else {
+        titleKpi.innerText = "Review Wording";
+        titleKpi.className = "font-bold text-amber-600 font-mono text-xs";
+      }
 
       // Advisory List
       const list = document.getElementById('adviceList');
       list.innerHTML = "";
       data.actionable_advice.forEach(item => {
         const li = document.createElement('li');
-        li.className = "p-3 bg-slate-50 rounded-xl border border-slate-200 flex items-start space-x-2";
+        li.className = "p-3 bg-slate-50/80 rounded-xl border border-slate-200/80 flex items-start space-x-2.5 transition hover:bg-slate-50";
         li.innerHTML = `
           <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-600 mt-0.5 flex-shrink-0"></i>
-          <span>${item}</span>
+          <span class="text-slate-700 leading-relaxed font-medium">${item}</span>
         `;
         list.appendChild(li);
       });
@@ -753,6 +919,49 @@
       simChart.update();
     }
 
+    function showToast(message) {
+      const container = document.getElementById('toastContainer');
+      const toast = document.createElement('div');
+      toast.className = "bg-slate-900 text-white text-xs font-semibold px-4 py-2.5 rounded-xl shadow-lg border border-slate-700 pointer-events-auto transform transition-all duration-300 translate-y-2 opacity-0 flex items-center space-x-2";
+      toast.innerHTML = `<i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i><span>${message}</span>`;
+      container.appendChild(toast);
+      lucide.createIcons();
+
+      setTimeout(() => {
+        toast.classList.remove('translate-y-2', 'opacity-0');
+      }, 50);
+
+      setTimeout(() => {
+        toast.classList.add('translate-y-2', 'opacity-0');
+        setTimeout(() => toast.remove(), 300);
+      }, 2500);
+    }
+
+    function copyShareReport() {
+      if (!lastResult) {
+        showToast("Generate a prediction first!");
+        return;
+      }
+      const text = `🚀 CrowdPulse AI Campaign Report
+Project: ${lastResult.title}
+Category: ${lastResult.main_category} (${lastResult.country})
+Funding Target: $${Number(lastResult.usd_goal).toLocaleString()} USD
+Duration: ${lastResult.duration_days} Days
+---
+Outcome: ${lastResult.prediction} (${lastResult.probability_pct} Probability)
+Risk Tier: ${lastResult.risk_level}
+Key Advice:
+${lastResult.actionable_advice.map(a => `• ${a}`).join('\n')}
+---
+Live Tool: https://crowdpulse-api-3yaw.onrender.com/`;
+
+      navigator.clipboard.writeText(text).then(() => {
+        showToast("Campaign report copied to clipboard!");
+      }).catch(() => {
+        showToast("Unable to copy to clipboard");
+      });
+    }
+
     // Auto run on load
     window.addEventListener('DOMContentLoaded', () => {
       initGauge();
@@ -764,4 +973,3 @@
   </script>
 </body>
 </html>
-
