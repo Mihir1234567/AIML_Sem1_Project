@@ -65,10 +65,10 @@
         </div>
       </div>
       <div class="flex items-center space-x-2 text-xs">
-        <button onclick="promptBackendUrl()" class="flex items-center space-x-1.5 bg-slate-800/80 hover:bg-slate-700/80 px-2.5 py-1.5 rounded-lg border border-slate-700 transition" title="Click to configure backend URL">
-          <span id="backendDot" class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
-          <span id="backendText" class="text-slate-300">Backend: Connecting...</span>
-        </button>
+        <div class="flex items-center space-x-1.5 bg-slate-800/80 px-2.5 py-1.5 rounded-lg border border-slate-700">
+          <span id="backendDot" class="w-2 h-2 rounded-full bg-emerald-400"></span>
+          <span id="backendText" class="text-slate-300">System: Online</span>
+        </div>
         <a id="swaggerLink" href="/docs" target="_blank" class="px-3 py-1.5 bg-white/10 hover:bg-white/20 transition rounded-lg text-white font-medium flex items-center space-x-1.5 border border-white/10">
           <i data-lucide="file-code" class="w-3.5 h-3.5"></i>
           <span>Swagger API</span>
@@ -401,26 +401,12 @@
 
       const host = window.location.hostname;
       const port = window.location.port;
-      // If served directly from FastAPI backend locally
-      if ((host === 'localhost' || host === '127.0.0.1') && port === '8000') {
-        return '';
-      }
-      // If running locally on another dev port (e.g. Live Server on 5500)
-      if (host === 'localhost' || host === '127.0.0.1') {
+      // If dev server runs on another port (e.g., Live Server on 5500)
+      if ((host === 'localhost' || host === '127.0.0.1') && port && port !== '8000') {
         return 'http://127.0.0.1:8000';
       }
-      // Default live Render backend
-      return 'https://crowdpulse-api-3yaw.onrender.com';
-    }
-
-    function promptBackendUrl() {
-      const current = getApiBaseUrl();
-      const entered = prompt("Enter your live Render backend URL:\n(e.g., https://your-app.onrender.com)", current);
-      if (entered !== null) {
-        const cleaned = entered.trim().replace(/\/+$/, '');
-        localStorage.setItem('crowdpulse_backend_url', cleaned);
-        checkBackendHealth();
-      }
+      // When hosted on Render or localhost:8000, use relative paths directly
+      return '';
     }
 
     async function checkBackendHealth() {
@@ -431,23 +417,20 @@
       if (swagger) swagger.href = `${base}/docs`;
 
       try {
-        text.innerText = "Backend: Checking...";
-        dot.className = "w-2 h-2 rounded-full bg-amber-400 animate-pulse";
-        
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 8000);
         const res = await fetch(`${base}/api/health`, { signal: controller.signal });
         clearTimeout(timeoutId);
 
         if (res.ok) {
-          dot.className = "w-2 h-2 rounded-full bg-emerald-400";
-          text.innerText = "Backend: Online";
+          if (dot) dot.className = "w-2 h-2 rounded-full bg-emerald-400";
+          if (text) text.innerText = "System: Online";
         } else {
           throw new Error(`HTTP ${res.status}`);
         }
       } catch (err) {
-        dot.className = "w-2 h-2 rounded-full bg-rose-400";
-        text.innerText = "Backend: Connecting / Asleep";
+        if (dot) dot.className = "w-2 h-2 rounded-full bg-amber-400 animate-pulse";
+        if (text) text.innerText = "System: Waking Up...";
         console.warn("Backend check note:", err);
       }
     }
