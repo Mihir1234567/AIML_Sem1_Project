@@ -43,9 +43,22 @@ metadata = {}
 def get_model():
     global model_pipeline, metadata
     if model_pipeline is None:
-        if not os.path.exists(MODEL_PATH):
-            raise RuntimeError(f"Trained model not found at {MODEL_PATH}. Run train.py first.")
-        model_pipeline = joblib.load(MODEL_PATH)
+        try:
+            if not os.path.exists(MODEL_PATH):
+                raise RuntimeError(f"Trained model not found at {MODEL_PATH}.")
+            model_pipeline = joblib.load(MODEL_PATH)
+        except Exception as load_err:
+            print(f"⚠️ Model load failed ({load_err}). Triggering self-healing fallback...")
+            try:
+                import sys
+                if BASE_DIR not in sys.path:
+                    sys.path.insert(0, BASE_DIR)
+                from train import train_and_save
+                train_and_save()
+                model_pipeline = joblib.load(MODEL_PATH)
+                print("✅ Model successfully retrained natively and loaded.")
+            except Exception as train_err:
+                raise RuntimeError(f"Model load and auto-retrain both failed. Load error: {load_err}. Retrain error: {train_err}")
         
         if os.path.exists(METADATA_PATH):
             with open(METADATA_PATH, "r", encoding="utf-8") as f:
