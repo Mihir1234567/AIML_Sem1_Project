@@ -64,12 +64,12 @@
           <p class="text-xs text-slate-300">Crowdfunding Success Predictor & Pre-Launch Decision Support</p>
         </div>
       </div>
-      <div class="flex items-center space-x-3 text-xs">
-        <div class="hidden sm:flex items-center space-x-2 bg-slate-800/80 px-3 py-1.5 rounded-lg border border-slate-700">
-          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-          <span class="text-slate-300">Model: <strong class="text-white">HistGradientBoosting (AUC 71.8%)</strong></span>
-        </div>
-        <a href="/docs" target="_blank" class="px-3 py-1.5 bg-white/10 hover:bg-white/20 transition rounded-lg text-white font-medium flex items-center space-x-1.5 border border-white/10">
+      <div class="flex items-center space-x-2 text-xs">
+        <button onclick="promptBackendUrl()" class="flex items-center space-x-1.5 bg-slate-800/80 hover:bg-slate-700/80 px-2.5 py-1.5 rounded-lg border border-slate-700 transition" title="Click to configure backend URL">
+          <span id="backendDot" class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
+          <span id="backendText" class="text-slate-300">Backend: Connecting...</span>
+        </button>
+        <a id="swaggerLink" href="/docs" target="_blank" class="px-3 py-1.5 bg-white/10 hover:bg-white/20 transition rounded-lg text-white font-medium flex items-center space-x-1.5 border border-white/10">
           <i data-lucide="file-code" class="w-3.5 h-3.5"></i>
           <span>Swagger API</span>
         </a>
@@ -394,6 +394,64 @@
     // Initialize Lucide Icons
     lucide.createIcons();
 
+    // Backend API URL resolver
+    function getApiBaseUrl() {
+      const saved = localStorage.getItem('crowdpulse_backend_url');
+      if (saved) return saved.replace(/\/+$/, '');
+
+      const host = window.location.hostname;
+      const port = window.location.port;
+      // If served directly from FastAPI backend locally
+      if ((host === 'localhost' || host === '127.0.0.1') && port === '8000') {
+        return '';
+      }
+      // If running locally on another dev port (e.g. Live Server on 5500)
+      if (host === 'localhost' || host === '127.0.0.1') {
+        return 'http://127.0.0.1:8000';
+      }
+      // Default live Render backend (can be customized via promptBackendUrl)
+      return 'https://crowdpulse-aiml.onrender.com';
+    }
+
+    function promptBackendUrl() {
+      const current = getApiBaseUrl();
+      const entered = prompt("Enter your live Render backend URL:\n(e.g., https://your-app.onrender.com)", current);
+      if (entered !== null) {
+        const cleaned = entered.trim().replace(/\/+$/, '');
+        localStorage.setItem('crowdpulse_backend_url', cleaned);
+        checkBackendHealth();
+      }
+    }
+
+    async function checkBackendHealth() {
+      const base = getApiBaseUrl();
+      const dot = document.getElementById('backendDot');
+      const text = document.getElementById('backendText');
+      const swagger = document.getElementById('swaggerLink');
+      if (swagger) swagger.href = `${base}/docs`;
+
+      try {
+        text.innerText = "Backend: Checking...";
+        dot.className = "w-2 h-2 rounded-full bg-amber-400 animate-pulse";
+        
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 8000);
+        const res = await fetch(`${base}/api/health`, { signal: controller.signal });
+        clearTimeout(timeoutId);
+
+        if (res.ok) {
+          dot.className = "w-2 h-2 rounded-full bg-emerald-400";
+          text.innerText = "Backend: Online";
+        } else {
+          throw new Error(`HTTP ${res.status}`);
+        }
+      } catch (err) {
+        dot.className = "w-2 h-2 rounded-full bg-rose-400";
+        text.innerText = "Backend: Connecting / Asleep";
+        console.warn("Backend check note:", err);
+      }
+    }
+
     // Chart instances
     let gaugeChart = null;
     let simChart = null;
@@ -578,6 +636,8 @@
       submitBtn.disabled = true;
       submitBtn.classList.add('opacity-75');
 
+      const baseUrl = getApiBaseUrl();
+
       const payload = {
         title: document.getElementById('titleInput').value.trim(),
         main_category: document.getElementById('categorySelect').value,
@@ -590,7 +650,7 @@
 
       try {
         // 1. Prediction Call
-        const res = await fetch('/api/predict', {
+        const res = await fetch(`${baseUrl}/api/predict`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
@@ -599,6 +659,14 @@
         if (!res.ok) throw new Error(`Server returned ${res.status}`);
         const data = await res.json();
         renderPrediction(data);
+
+        // Update backend status to online if successful
+        const dot = document.getElementById('backendDot');
+        const text = document.getElementById('backendText');
+        if (dot && text) {
+          dot.className = "w-2 h-2 rounded-full bg-emerald-400";
+          text.innerText = "Backend: Online";
+        }
 
         // 2. Simulation Call for Sweet Spot Curve
         const simPayload = {
@@ -611,7 +679,7 @@
           steps: 15
         };
 
-        const simRes = await fetch('/api/simulate', {
+        const simRes = await fetch(`${baseUrl}/api/simulate`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(simPayload)
@@ -624,7 +692,17 @@
 
       } catch (err) {
         console.error("Prediction error:", err);
-        alert("Failed to connect to ML backend. Ensure FastAPI server is running.");
+        const dot = document.getElementById('backendDot');
+        const text = document.getElementById('backendText');
+        if (dot && text) {
+          dot.className = "w-2 h-2 rounded-full bg-rose-400";
+          text.innerText = "Backend: Offline / Waking";
+        }
+        alert(
+          "⚠️ Could not reach the ML backend at: " + (baseUrl || window.location.origin) + "\n\n" +
+          "• If your backend is hosted on Render free tier, it sleeps after inactivity and takes ~45 seconds to spin up on the first visit.\n" +
+          "• If using a new Render URL, click the 'Backend' button in the top navigation bar to configure it."
+        );
       } finally {
         submitBtn.disabled = false;
         submitBtn.classList.remove('opacity-75');
@@ -697,6 +775,7 @@
       initGauge();
       initSimChart();
       updateTitleStats();
+      checkBackendHealth();
       runPrediction();
     });
   </script>
