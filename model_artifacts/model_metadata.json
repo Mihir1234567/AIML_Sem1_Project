@@ -1,0 +1,70 @@
+{
+  "model_name": "HistGradientBoostingClassifier",
+  "metrics": {
+    "accuracy": 0.6714166666666667,
+    "precision": 0.6158488585673052,
+    "recall": 0.4863240779113137,
+    "f1": 0.5434757438925553,
+    "roc_auc": 0.7176584418499783
+  },
+  "categories": [
+    "Art",
+    "Comics",
+    "Crafts",
+    "Dance",
+    "Design",
+    "Fashion",
+    "Film & Video",
+    "Food",
+    "Games",
+    "Journalism",
+    "Music",
+    "Photography",
+    "Publishing",
+    "Technology",
+    "Theater"
+  ],
+  "countries": [
+    "AT",
+    "AU",
+    "BE",
+    "CA",
+    "CH",
+    "DE",
+    "DK",
+    "ES",
+    "FR",
+    "GB",
+    "HK",
+    "IE",
+    "IT",
+    "LU",
+    "MX",
+    "N,\"0",
+    "NL",
+    "NO",
+    "NZ",
+    "SE",
+    "SG",
+    "US"
+  ],
+  "numeric_features": [
+    "log_usd_goal",
+    "duration_days",
+    "launch_month",
+    "launch_day_of_week",
+    "is_weekend",
+    "name_char_len",
+    "name_word_count",
+    "has_exclamation",
+    "has_question",
+    "is_all_caps"
+  ],
+  "categorical_features": [
+    "main_category",
+    "country"
+  ],
+  "train_samples": 48000,
+  "test_samples": 12000,
+  "trained_at": "2026-11-12 18:19:55"
+}
