@@ -9,11 +9,15 @@ from sklearn.preprocessing import StandardScaler, OneHotEncoder
 from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
 from sklearn.ensemble import HistGradientBoostingClassifier
-from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, roc_auc_score
+from sklearn.calibration import CalibratedClassifierCV
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, roc_auc_score, brier_score_loss
+
+# Set execution environment for loky stability
+os.environ["LOKY_MAX_CPU_COUNT"] = "1"
 
 def train_and_save():
     start_time = time.time()
-    print("🚀 Starting model training and artifact export...")
+    print("🚀 Starting Advanced AI Model Training & Artifact Generation...")
     
     # 1. Dataset Path
     possible_paths = [
@@ -52,12 +56,27 @@ def train_and_save():
     df['duration_days'] = (df['deadline_dt'] - df['launched_dt']).dt.total_seconds() / 86400.0
     df = df[(df['duration_days'] >= 1) & (df['duration_days'] <= 90)].copy()
     
-    # Feature Extraction
+    # 3. Model Upgrade 1: Category Median Goal & Relative Hurdle Features
+    category_medians = df.groupby('main_category')['usd_goal_real'].median().to_dict()
+    df['category_median_goal'] = df['main_category'].map(category_medians).fillna(5000.0)
+    df['goal_to_cat_median_ratio'] = df['usd_goal_real'] / df['category_median_goal']
+    df['log_goal_to_cat_median'] = np.log1p(df['goal_to_cat_median_ratio'])
+    
+    # 4. Feature Extraction
     features_df = pd.DataFrame(index=df.index)
     features_df['target'] = df['target']
     features_df['main_category'] = df['main_category'].fillna('Unknown')
+    
+    # Model Upgrade 2: Granular Sub-Category Integration
+    features_df['category'] = df['category'].fillna('General').astype(str)
     features_df['country'] = df['country'].fillna('Unknown')
+    
+    # Financial Scale & Relative Financial Hurdle
     features_df['log_usd_goal'] = np.log1p(df['usd_goal_real'])
+    features_df['goal_to_cat_median_ratio'] = df['goal_to_cat_median_ratio']
+    features_df['log_goal_to_cat_median'] = df['log_goal_to_cat_median']
+    
+    # Temporal Properties
     features_df['duration_days'] = df['duration_days']
     features_df['launch_month'] = df['launched_dt'].dt.month
     features_df['launch_day_of_week'] = df['launched_dt'].dt.dayofweek
@@ -71,17 +90,23 @@ def train_and_save():
     features_df['has_question'] = clean_names.apply(lambda s: int('?' in s))
     features_df['is_all_caps'] = clean_names.apply(lambda s: int(s.isupper() and len(s) > 3))
     
-    # Unique categories and countries for frontend dropdowns
+    # Unique categories and subcategories mapping for frontend dropdowns
     categories = sorted(features_df['main_category'].unique().tolist())
     countries = sorted(features_df['country'].unique().tolist())
     
-    # Subsets
+    cat_to_subcat = {}
+    for mc in categories:
+        subcats = sorted(features_df[features_df['main_category'] == mc]['category'].unique().tolist())
+        cat_to_subcat[mc] = subcats
+    
+    # Feature Subsets
     numeric_features = [
-        'log_usd_goal', 'duration_days', 'launch_month', 'launch_day_of_week',
+        'log_usd_goal', 'goal_to_cat_median_ratio', 'log_goal_to_cat_median',
+        'duration_days', 'launch_month', 'launch_day_of_week',
         'is_weekend', 'name_char_len', 'name_word_count', 'has_exclamation',
         'has_question', 'is_all_caps'
     ]
-    categorical_features = ['main_category', 'country']
+    categorical_features = ['main_category', 'category', 'country']
     
     X = features_df[numeric_features + categorical_features]
     y = features_df['target']
@@ -96,22 +121,26 @@ def train_and_save():
         X_sample, y_sample, test_size=0.20, random_state=42, stratify=y_sample
     )
     
+    # Preprocessor with min_frequency to robustly handle sub-categories
     preprocessor = ColumnTransformer([
         ('num', StandardScaler(), numeric_features),
-        ('cat', OneHotEncoder(handle_unknown='ignore', sparse_output=False), categorical_features)
+        ('cat', OneHotEncoder(handle_unknown='ignore', min_frequency=15, sparse_output=False), categorical_features)
     ])
     
-    # Classifier: HistGradientBoosting offers high ROC-AUC and fast execution
-    model = HistGradientBoostingClassifier(
-        max_iter=120, max_depth=6, random_state=42
+    # Model Upgrade 4: Calibrated Classifier
+    base_model = HistGradientBoostingClassifier(
+        max_iter=130, max_depth=6, random_state=42
+    )
+    calibrated_model = CalibratedClassifierCV(
+        estimator=base_model, method='sigmoid', cv=3
     )
     
     pipeline = Pipeline([
         ('preprocessor', preprocessor),
-        ('classifier', model)
+        ('classifier', calibrated_model)
     ])
     
-    print("⏳ Fitting pipeline...")
+    print("⏳ Fitting Calibrated Pipeline with Relative Financial & Subcategory Features...")
     pipeline.fit(X_train, y_train)
     
     # Evaluation on holdout test set
@@ -123,9 +152,10 @@ def train_and_save():
         'precision': float(precision_score(y_test, y_pred)),
         'recall': float(recall_score(y_test, y_pred)),
         'f1': float(f1_score(y_test, y_pred)),
-        'roc_auc': float(roc_auc_score(y_test, y_prob))
+        'roc_auc': float(roc_auc_score(y_test, y_prob)),
+        'brier_score': float(brier_score_loss(y_test, y_prob))
     }
-    print(f"📊 Test Metrics: ROC-AUC={metrics['roc_auc']:.4f}, Accuracy={metrics['accuracy']:.4f}, F1={metrics['f1']:.4f}")
+    print(f"📊 Test Metrics: ROC-AUC={metrics['roc_auc']:.4f}, Accuracy={metrics['accuracy']:.4f}, Brier={metrics['brier_score']:.4f}")
     
     # Save artifacts
     artifact_dir = "model_artifacts"
@@ -134,10 +164,33 @@ def train_and_save():
     joblib.dump(pipeline, pipeline_file)
     print(f"💾 Model pipeline saved to {pipeline_file}")
     
+    # Extract real historical campaigns for Similar Campaign Matcher (Option 2)
+    sample_real = df.sample(n=min(5000, len(df)), random_state=42)
+    historical_matches = []
+    for _, row in sample_real.iterrows():
+        name_clean = str(row['name']).strip()
+        if len(name_clean) > 3:
+            historical_matches.append({
+                'name': name_clean,
+                'main_category': str(row['main_category']),
+                'category': str(row['category']),
+                'country': str(row['country']),
+                'usd_goal': round(float(row['usd_goal_real']), 0),
+                'duration_days': round(float(row['duration_days']), 0),
+                'outcome': 'Successful' if row['target'] == 1 else 'Failed'
+            })
+            
+    similar_file = os.path.join(artifact_dir, "historical_campaigns.json")
+    with open(similar_file, 'w', encoding='utf-8') as f:
+        json.dump(historical_matches, f)
+    print(f"💾 Historical campaign index saved to {similar_file} ({len(historical_matches)} records)")
+    
     metadata = {
-        'model_name': 'HistGradientBoostingClassifier',
+        'model_name': 'CalibratedHistGradientBoostingClassifier',
         'metrics': metrics,
         'categories': categories,
+        'cat_to_subcat': cat_to_subcat,
+        'category_medians': category_medians,
         'countries': countries,
         'numeric_features': numeric_features,
         'categorical_features': categorical_features,
@@ -156,4 +209,3 @@ def train_and_save():
 
 if __name__ == '__main__':
     train_and_save()
-

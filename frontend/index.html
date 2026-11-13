@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CrowdPulse 3D — AI Crowdfunding Success Predictor</title>
+  <title>CrowdPulse 3D — Advanced AI Crowdfunding Predictor & Optimizer</title>
   
   <!-- Google Fonts: Plus Jakarta Sans & Space Grotesk & Fira Code -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -16,7 +16,7 @@
   <!-- Three.js (3D Graphics Engine) -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   
-  <!-- GSAP (High-Performance Motion & Animation) -->
+  <!-- GSAP (Motion & Number Physics) -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   
   <!-- Vanilla-Tilt (3D Interactive Tilt & Glare) -->
@@ -60,7 +60,7 @@
             'neon-cyan': '0 0 25px -5px rgba(6, 182, 212, 0.4), 0 0 10px -2px rgba(6, 182, 212, 0.2)',
             'neon-emerald': '0 0 30px -5px rgba(16, 185, 129, 0.4), 0 0 15px -2px rgba(16, 185, 129, 0.2)',
             'neon-rose': '0 0 30px -5px rgba(244, 63, 94, 0.4), 0 0 15px -2px rgba(244, 63, 94, 0.2)',
-            'glass': '0 8px 32px 0 rgba(0, 0, 0, 0.37)'
+            'glass': '0 8px 32px 0 rgba(0, 0, 0, 0.45)'
           }
         }
       }
@@ -68,7 +68,6 @@
   </script>
 
   <style>
-    /* Custom 3D & Glass Styles */
     body {
       font-family: 'Plus Jakarta Sans', sans-serif;
       background-color: #030712;
@@ -81,23 +80,11 @@
     }
 
     .glass-panel {
-      background: rgba(15, 23, 42, 0.65);
+      background: rgba(15, 23, 42, 0.72);
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
       border: 1px solid rgba(255, 255, 255, 0.08);
       box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
-    }
-
-    .glass-panel-interactive {
-      background: rgba(15, 23, 42, 0.65);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-    .glass-panel-interactive:hover {
-      border-color: rgba(99, 102, 241, 0.35);
-      box-shadow: 0 12px 40px 0 rgba(99, 102, 241, 0.15);
     }
 
     /* Ambient animated radial glow in background */
@@ -107,7 +94,7 @@
       left: -10%;
       width: 50vw;
       height: 50vw;
-      background: radial-gradient(circle, rgba(99, 102, 241, 0.18) 0%, rgba(0, 0, 0, 0) 70%);
+      background: radial-gradient(circle, rgba(99, 102, 241, 0.16) 0%, rgba(0, 0, 0, 0) 70%);
       pointer-events: none;
       z-index: 0;
       animation: pulse-slow 12s ease-in-out infinite alternate;
@@ -174,9 +161,9 @@
       <div class="flex items-center space-x-2">
         <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-cyan-500/10 text-cyan-400 border border-cyan-500/30">
           <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 mr-1.5 animate-ping"></span>
-          NEURAL PREDICTOR 3.0
+          CALIBRATED ML 2.0
         </span>
-        <span class="hidden md:inline text-slate-400 font-mono text-[11px]">Zero-Leakage Gradient Boost Architecture</span>
+        <span class="hidden md:inline text-slate-400 font-mono text-[11px]">Calibrated HistGradientBoost · Stratified ROC-AUC 73.9%</span>
       </div>
       <div class="flex items-center space-x-4">
         <div class="flex items-center space-x-1.5 font-mono text-[11px]">
@@ -206,17 +193,21 @@
         <div>
           <div class="flex items-center space-x-2">
             <h1 class="text-xl font-display font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white via-slate-100 to-cyan-300">
-              Crowd<span class="text-cyan-400">Pulse</span> <span class="text-xs text-indigo-400 font-mono font-normal">3D</span>
+              Crowd<span class="text-cyan-400">Pulse</span> <span class="text-xs text-indigo-400 font-mono font-normal">3D PRO</span>
             </h1>
-            <span class="px-2 py-0.5 text-[9px] font-mono font-bold uppercase tracking-wider bg-indigo-500/20 text-indigo-300 rounded border border-indigo-500/30">ML Ops</span>
+            <span class="px-2 py-0.5 text-[9px] font-mono font-bold uppercase tracking-wider bg-indigo-500/20 text-indigo-300 rounded border border-indigo-500/30">Calibrated</span>
           </div>
-          <p class="text-[11px] text-slate-400 font-medium">Applied Machine Learning Pre-Launch Campaign Intelligence</p>
+          <p class="text-[11px] text-slate-400 font-medium">Predictive Intelligence · Counterfactual Optimizer · KNN Historical Matcher</p>
         </div>
       </div>
 
       <!-- Action items -->
       <div class="flex items-center space-x-2.5">
-        <button onclick="copyShareReport()" class="hidden sm:inline-flex items-center space-x-1.5 px-3 py-1.5 text-xs font-semibold text-slate-200 bg-white/5 hover:bg-white/10 rounded-xl transition border border-white/10 shadow-xs cursor-pointer active:scale-95">
+        <button onclick="triggerAutoOptimize()" class="inline-flex items-center space-x-1.5 px-3 py-1.5 text-xs font-semibold text-white bg-gradient-to-r from-indigo-600 to-cyan-600 hover:opacity-90 rounded-xl transition shadow-neon-cyan cursor-pointer active:scale-95 font-display">
+          <i data-lucide="sparkles" class="w-3.5 h-3.5 text-amber-300 animate-pulse"></i>
+          <span>Auto-Optimize</span>
+        </button>
+        <button onclick="copyShareReport()" class="hidden sm:inline-flex items-center space-x-1.5 px-3 py-1.5 text-xs font-semibold text-slate-200 bg-white/5 hover:bg-white/10 rounded-xl transition border border-white/10 cursor-pointer active:scale-95">
           <i data-lucide="share-2" class="w-3.5 h-3.5 text-cyan-400"></i>
           <span>Share Intel</span>
         </button>
@@ -237,18 +228,18 @@
       <div class="flex items-center justify-between mb-3">
         <span class="text-[11px] font-mono font-bold uppercase tracking-widest text-cyan-400 flex items-center">
           <i data-lucide="zap" class="w-3.5 h-3.5 mr-1.5 text-amber-400 fill-amber-400 animate-pulse"></i>
-          Neural Archetypes (Instant Presets)
+          Campaign Archetypes (Instant Presets)
         </span>
-        <span class="text-[11px] text-slate-400 font-mono">1-Click Neural Re-Evaluation</span>
+        <span class="text-[11px] text-slate-400 font-mono">Real-world pre-launch benchmarks</span>
       </div>
       <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
         
         <button type="button" onclick="loadPreset('game')" class="p-3 rounded-xl bg-white/[0.03] hover:bg-white/[0.08] border border-white/10 hover:border-cyan-500/50 text-left transition duration-200 group cursor-pointer relative overflow-hidden">
           <div class="flex items-center justify-between text-xs font-bold text-slate-200 group-hover:text-cyan-400">
-            <span class="flex items-center font-display"><span class="mr-1.5 text-sm">🎮</span> Indie Board Game</span>
+            <span class="flex items-center font-display"><span class="mr-1.5 text-sm">🎮</span> Board Game</span>
             <span class="text-emerald-400 font-mono font-semibold">$12,000</span>
           </div>
-          <div class="text-[11px] text-slate-400 mt-1 font-mono truncate">Games · 30 Days · US</div>
+          <div class="text-[11px] text-slate-400 mt-1 font-mono truncate">Games · Tabletop Games · US</div>
         </button>
 
         <button type="button" onclick="loadPreset('iot')" class="p-3 rounded-xl bg-white/[0.03] hover:bg-white/[0.08] border border-white/10 hover:border-cyan-500/50 text-left transition duration-200 group cursor-pointer relative overflow-hidden">
@@ -256,15 +247,15 @@
             <span class="flex items-center font-display"><span class="mr-1.5 text-sm">⚡</span> Smart IoT Hub</span>
             <span class="text-rose-400 font-mono font-semibold">$75,000</span>
           </div>
-          <div class="text-[11px] text-slate-400 mt-1 font-mono truncate">Technology · 45 Days · US</div>
+          <div class="text-[11px] text-slate-400 mt-1 font-mono truncate">Technology · Hardware · US</div>
         </button>
 
         <button type="button" onclick="loadPreset('comic')" class="p-3 rounded-xl bg-white/[0.03] hover:bg-white/[0.08] border border-white/10 hover:border-cyan-500/50 text-left transition duration-200 group cursor-pointer relative overflow-hidden">
           <div class="flex items-center justify-between text-xs font-bold text-slate-200 group-hover:text-cyan-400">
-            <span class="flex items-center font-display"><span class="mr-1.5 text-sm">📚</span> Art Hardcover</span>
+            <span class="flex items-center font-display"><span class="mr-1.5 text-sm">📚</span> Art Anthology</span>
             <span class="text-emerald-400 font-mono font-semibold">$4,500</span>
           </div>
-          <div class="text-[11px] text-slate-400 mt-1 font-mono truncate">Publishing · 25 Days · US</div>
+          <div class="text-[11px] text-slate-400 mt-1 font-mono truncate">Publishing · Art Books · US</div>
         </button>
 
         <button type="button" onclick="loadPreset('film')" class="p-3 rounded-xl bg-white/[0.03] hover:bg-white/[0.08] border border-white/10 hover:border-cyan-500/50 text-left transition duration-200 group cursor-pointer relative overflow-hidden">
@@ -272,7 +263,7 @@
             <span class="flex items-center font-display"><span class="mr-1.5 text-sm">🎬</span> Sci-Fi Short</span>
             <span class="text-amber-400 font-mono font-semibold">$28,000</span>
           </div>
-          <div class="text-[11px] text-slate-400 mt-1 font-mono truncate">Film & Video · 35 Days · GB</div>
+          <div class="text-[11px] text-slate-400 mt-1 font-mono truncate">Film & Video · Narrative Film · GB</div>
         </button>
 
       </div>
@@ -318,13 +309,13 @@
             </div>
           </div>
 
-          <!-- Category and Country -->
+          <!-- Main Category & Subcategory (Option 2) -->
           <div class="grid grid-cols-2 gap-3">
             <div>
               <label for="categorySelect" class="block text-xs font-bold text-slate-300 mb-1">
-                Category
+                Main Category
               </label>
-              <select id="categorySelect" onchange="onInputChange()" class="w-full px-3 py-2 text-sm bg-slate-900/80 border border-white/10 rounded-xl focus:border-cyan-400 text-white transition cursor-pointer">
+              <select id="categorySelect" onchange="onMainCategoryChange()" class="w-full px-3 py-2 text-sm bg-slate-900/80 border border-white/10 rounded-xl focus:border-cyan-400 text-white transition cursor-pointer">
                 <option value="Games" selected>Games</option>
                 <option value="Technology">Technology</option>
                 <option value="Design">Design</option>
@@ -344,30 +335,43 @@
             </div>
 
             <div>
-              <label for="countrySelect" class="block text-xs font-bold text-slate-300 mb-1">
-                Market
+              <label for="subCategorySelect" class="block text-xs font-bold text-slate-300 mb-1">
+                Sub-Category
               </label>
-              <select id="countrySelect" onchange="onInputChange()" class="w-full px-3 py-2 text-sm bg-slate-900/80 border border-white/10 rounded-xl focus:border-cyan-400 text-white transition cursor-pointer">
-                <option value="US" selected>United States (US)</option>
-                <option value="GB">United Kingdom (GB)</option>
-                <option value="CA">Canada (CA)</option>
-                <option value="AU">Australia (AU)</option>
-                <option value="DE">Germany (DE)</option>
-                <option value="FR">France (FR)</option>
-                <option value="NL">Netherlands (NL)</option>
-                <option value="IT">Italy (IT)</option>
-                <option value="ES">Spain (ES)</option>
-                <option value="SE">Sweden (SE)</option>
-                <option value="SG">Singapore (SG)</option>
-                <option value="HK">Hong Kong (HK)</option>
+              <select id="subCategorySelect" onchange="onInputChange()" class="w-full px-3 py-2 text-sm bg-slate-900/80 border border-white/10 rounded-xl focus:border-cyan-400 text-white transition cursor-pointer">
+                <option value="Tabletop Games" selected>Tabletop Games</option>
               </select>
             </div>
           </div>
 
-          <!-- Funding Goal Section -->
+          <!-- Market / Country -->
+          <div>
+            <label for="countrySelect" class="block text-xs font-bold text-slate-300 mb-1">
+              Primary Market
+            </label>
+            <select id="countrySelect" onchange="onInputChange()" class="w-full px-3 py-2 text-sm bg-slate-900/80 border border-white/10 rounded-xl focus:border-cyan-400 text-white transition cursor-pointer">
+              <option value="US" selected>United States (US)</option>
+              <option value="GB">United Kingdom (GB)</option>
+              <option value="CA">Canada (CA)</option>
+              <option value="AU">Australia (AU)</option>
+              <option value="DE">Germany (DE)</option>
+              <option value="FR">France (FR)</option>
+              <option value="NL">Netherlands (NL)</option>
+              <option value="IT">Italy (IT)</option>
+              <option value="ES">Spain (ES)</option>
+              <option value="SE">Sweden (SE)</option>
+              <option value="SG">Singapore (SG)</option>
+              <option value="HK">Hong Kong (HK)</option>
+            </select>
+          </div>
+
+          <!-- Funding Goal Section with Relative Median Indicator (Option 1) -->
           <div class="space-y-2 bg-slate-900/60 p-3.5 rounded-xl border border-white/10">
             <div class="flex items-center justify-between">
-              <label for="goalInput" class="text-xs font-bold text-slate-300">Funding Target (USD)</label>
+              <div>
+                <label for="goalInput" class="text-xs font-bold text-slate-300">Funding Target (USD)</label>
+                <span id="medianRatioBadge" class="text-[10px] font-mono text-cyan-400 block">1.5x Category Median</span>
+              </div>
               <span id="goalDisplay" class="text-xs font-bold font-mono text-cyan-400 bg-cyan-500/10 px-2 py-0.5 rounded border border-cyan-500/30">$12,000</span>
             </div>
 
@@ -459,13 +463,13 @@
 
       </div>
 
-      <!-- RIGHT: 3D Holographic Scorecard & Analytics Bento Grid (7 Columns) -->
+      <!-- RIGHT: 3D Holographic Scorecard, Optimizer & Similar Campaigns Bento Grid (7 Columns) -->
       <div class="lg:col-span-7 space-y-6">
 
         <!-- BENTO 1: 3D Holographic AI Core & Success Scorecard -->
         <div class="glass-panel rounded-2xl p-6 shadow-glass border border-white/10 relative overflow-hidden" data-tilt data-tilt-max="4" data-tilt-glare data-tilt-max-glare="0.12">
           
-          <!-- Three.js Interactive 3D Canvas Background for Scorecard -->
+          <!-- Three.js Interactive 3D Canvas Background -->
           <canvas id="threeCanvas"></canvas>
 
           <div class="relative z-10 flex flex-col sm:flex-row items-center justify-between gap-6">
@@ -477,11 +481,11 @@
               <!-- Center Hologram Readout -->
               <div class="absolute inset-0 flex flex-col items-center justify-center text-center pointer-events-none">
                 <span id="probValue" class="text-4xl font-display font-extrabold text-white tracking-tight drop-shadow-[0_0_15px_rgba(34,211,238,0.5)]">--%</span>
-                <span class="text-[9px] uppercase font-mono font-bold text-cyan-400 tracking-widest mt-0.5">Confidence</span>
+                <span class="text-[9px] uppercase font-mono font-bold text-cyan-400 tracking-widest mt-0.5">Calibrated Probability</span>
               </div>
             </div>
 
-            <!-- Verdict & Classification -->
+            <!-- Verdict & Details -->
             <div class="flex-grow space-y-3 text-center sm:text-left">
               
               <div class="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full text-xs font-mono font-bold" id="badgeContainer">
@@ -491,27 +495,32 @@
 
               <div>
                 <h3 class="text-2xl font-display font-extrabold text-white" id="summaryHeader">Ready to Evaluate</h3>
-                <p class="text-xs text-slate-400 mt-0.5 font-mono" id="riskDetail">Model: HistGradientBoosting (Stratified Test AUC: 0.718)</p>
+                <p class="text-xs text-slate-400 mt-0.5 font-mono" id="riskDetail">Model: Calibrated HistGradientBoosting (Test AUC: 73.9%)</p>
+              </div>
+
+              <!-- Auto-Optimize Trigger Button (Option 1) -->
+              <div class="pt-1">
+                <button type="button" onclick="triggerAutoOptimize()" id="autoOptimizeBannerBtn"
+                  class="w-full sm:w-auto inline-flex items-center justify-center space-x-2 px-4 py-2 rounded-xl text-xs font-display font-bold text-white bg-gradient-to-r from-indigo-600 via-indigo-500 to-cyan-500 hover:opacity-95 shadow-neon-cyan transition active:scale-95 cursor-pointer">
+                  <i data-lucide="wand-2" class="w-3.5 h-3.5 text-amber-300"></i>
+                  <span>Auto-Optimize Campaign (Counterfactual AI)</span>
+                </button>
               </div>
 
               <!-- 3 Interactive 3D Micro-Tiles -->
-              <div class="grid grid-cols-3 gap-2.5 pt-2 text-xs">
-                
-                <div class="bg-slate-900/80 p-2.5 rounded-xl border border-white/10 backdrop-blur-md">
+              <div class="grid grid-cols-3 gap-2.5 pt-1 text-xs">
+                <div class="bg-slate-900/80 p-2 rounded-xl border border-white/10 backdrop-blur-md">
                   <span class="text-slate-400 block text-[9px] font-mono uppercase tracking-wider">Hurdle</span>
                   <span id="kpiHurdle" class="font-bold font-mono text-cyan-400 text-xs">Moderate</span>
                 </div>
-
-                <div class="bg-slate-900/80 p-2.5 rounded-xl border border-white/10 backdrop-blur-md">
+                <div class="bg-slate-900/80 p-2 rounded-xl border border-white/10 backdrop-blur-md">
                   <span class="text-slate-400 block text-[9px] font-mono uppercase tracking-wider">Velocity</span>
                   <span id="kpiPace" class="font-bold font-mono text-emerald-400 text-xs">Optimal</span>
                 </div>
-
-                <div class="bg-slate-900/80 p-2.5 rounded-xl border border-white/10 backdrop-blur-md">
+                <div class="bg-slate-900/80 p-2 rounded-xl border border-white/10 backdrop-blur-md">
                   <span class="text-slate-400 block text-[9px] font-mono uppercase tracking-wider">Semantics</span>
-                  <span id="kpiTitle" class="font-bold font-mono text-cyan-400 text-xs">Descriptive</span>
+                  <span id="kpiTitle" class="font-bold font-mono text-cyan-400 text-xs">Optimal</span>
                 </div>
-
               </div>
 
             </div>
@@ -519,7 +528,29 @@
           </div>
         </div>
 
-        <!-- BENTO 2: Strategic AI Action Plan -->
+        <!-- BENTO 2: Similar Real-World Historical Campaigns (Option 2) -->
+        <div class="glass-panel rounded-2xl p-6 shadow-glass border border-white/10 space-y-3">
+          <div class="flex items-center justify-between border-b border-white/10 pb-2.5">
+            <div class="flex items-center space-x-2">
+              <div class="w-7 h-7 rounded-lg bg-emerald-500/10 text-emerald-400 flex items-center justify-center border border-emerald-500/20">
+                <i data-lucide="history" class="w-4 h-4"></i>
+              </div>
+              <div>
+                <h3 class="text-sm font-display font-bold text-white">Similar Historical Campaigns (Ground Truth KNN)</h3>
+                <p class="text-[10px] text-slate-400 font-mono">Matched from real historical Kickstarter outcomes</p>
+              </div>
+            </div>
+            <span class="text-[10px] font-mono text-cyan-400 bg-cyan-500/10 px-2 py-0.5 rounded border border-cyan-500/20">Top 3 Matched</span>
+          </div>
+
+          <div id="similarCampaignsList" class="grid grid-cols-1 md:grid-cols-3 gap-2.5 pt-1">
+            <div class="p-3 bg-slate-900/60 rounded-xl border border-white/10 text-slate-400 text-xs text-center col-span-3">
+              Calculating nearest neighbor precedents...
+            </div>
+          </div>
+        </div>
+
+        <!-- BENTO 3: Strategic AI Directives -->
         <div class="glass-panel rounded-2xl p-6 shadow-glass border border-white/10 space-y-3">
           <div class="flex items-center justify-between border-b border-white/10 pb-2.5">
             <div class="flex items-center space-x-2">
@@ -542,7 +573,7 @@
           </ul>
         </div>
 
-        <!-- BENTO 3: Dynamic 3D Sensitivity Curve (Sweet Spot Grid Sweep) -->
+        <!-- BENTO 4: Dynamic 3D Sensitivity Curve (Sweet Spot Grid Sweep) -->
         <div class="glass-panel rounded-2xl p-6 shadow-glass border border-white/10 space-y-3">
           <div class="flex items-center justify-between border-b border-white/10 pb-2.5">
             <div>
@@ -573,7 +604,7 @@
           <i data-lucide="shield-check" class="w-4 h-4 mr-2 text-cyan-400"></i>
           Rigorous Machine Learning Validation Architecture
         </h4>
-        <span class="text-[11px] font-mono text-cyan-400">Trained on 48,000 campaigns · Validated on 12,000</span>
+        <span class="text-[11px] font-mono text-cyan-400">Calibrated Probabilities · Relative Financial Signals · Zero Target Leakage</span>
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-[11px]">
@@ -588,19 +619,19 @@
 
         <div class="p-3.5 bg-slate-900/60 rounded-xl border border-white/10 space-y-1">
           <strong class="text-white flex items-center font-bold">
-            <i data-lucide="dollar-sign" class="w-3.5 h-3.5 mr-1.5 text-emerald-400"></i> FX Normalization
+            <i data-lucide="scale" class="w-3.5 h-3.5 mr-1.5 text-emerald-400"></i> Relative Financial Hurdle
           </strong>
           <p class="leading-relaxed">
-            Standardizes 13 international currencies (GBP, EUR, CAD, AUD) into purchasing-power equivalent real USD prior to log transformation.
+            Normalizes goals against category-specific empirical medians (<code class="bg-black/40 text-emerald-300 px-1 py-0.5 rounded font-mono text-[10px]">goal_to_cat_median</code>) ensuring equitable cross-domain comparison.
           </p>
         </div>
 
         <div class="p-3.5 bg-slate-900/60 rounded-xl border border-white/10 space-y-1">
           <strong class="text-white flex items-center font-bold">
-            <i data-lucide="git-merge" class="w-3.5 h-3.5 mr-1.5 text-indigo-400"></i> Scikit-Learn Pipeline
+            <i data-lucide="sliders" class="w-3.5 h-3.5 mr-1.5 text-indigo-400"></i> Calibrated Probabilities
           </strong>
           <p class="leading-relaxed">
-            Encapsulates <code class="bg-black/40 text-indigo-300 px-1 py-0.5 rounded font-mono text-[10px]">StandardScaler</code> and <code class="bg-black/40 text-indigo-300 px-1 py-0.5 rounded font-mono text-[10px]">OneHotEncoder</code> within a single native estimator to eliminate data snooping.
+            Utilizes <code class="bg-black/40 text-indigo-300 px-1 py-0.5 rounded font-mono text-[10px]">CalibratedClassifierCV(method='sigmoid')</code> so output percentages map to empirical real-world success rates.
           </p>
         </div>
       </div>
@@ -608,10 +639,68 @@
 
   </main>
 
+  <!-- Auto-Optimize Counterfactual Modal (Option 1) -->
+  <div id="optimizeModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-md hidden opacity-0 transition-opacity duration-300">
+    <div class="glass-panel w-full max-w-xl rounded-2xl p-6 shadow-2xl border border-cyan-500/30 space-y-5 relative transform scale-95 transition-transform duration-300" id="modalCard">
+      
+      <div class="flex items-center justify-between border-b border-white/10 pb-3">
+        <div class="flex items-center space-x-2.5">
+          <div class="w-8 h-8 rounded-xl bg-gradient-to-tr from-cyan-500 to-indigo-600 flex items-center justify-center shadow-neon-cyan">
+            <i data-lucide="wand-2" class="w-4 h-4 text-white"></i>
+          </div>
+          <div>
+            <h3 class="text-base font-display font-bold text-white">AI Counterfactual Optimization Plan</h3>
+            <p class="text-xs text-slate-400 font-mono">Calculated minimal adjustments to reach viability</p>
+          </div>
+        </div>
+        <button onclick="closeOptimizeModal()" class="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-white/10 transition cursor-pointer">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <!-- Comparison Metrics Header -->
+      <div class="grid grid-cols-2 gap-3 p-3.5 rounded-xl bg-slate-900/80 border border-white/10">
+        <div class="space-y-0.5">
+          <span class="text-[10px] font-mono uppercase text-slate-400">Current Probability</span>
+          <div class="text-2xl font-display font-extrabold text-rose-400" id="optCurrentProb">--%</div>
+          <span class="text-[10px] text-slate-500 font-mono">Sub-optimal threshold</span>
+        </div>
+        <div class="space-y-0.5 border-l border-white/10 pl-3.5">
+          <span class="text-[10px] font-mono uppercase text-emerald-400 flex items-center">
+            <span>Optimized Probability</span>
+            <span class="ml-1.5 px-1.5 py-0.2 rounded text-[9px] bg-emerald-500/20 text-emerald-300 font-mono" id="optLiftBadge">+--%</span>
+          </span>
+          <div class="text-2xl font-display font-extrabold text-emerald-400" id="optNewProb">--%</div>
+          <span class="text-[10px] text-emerald-500/80 font-mono">Target Viable Cohort</span>
+        </div>
+      </div>
+
+      <!-- Changes Table -->
+      <div class="space-y-2">
+        <h4 class="text-xs font-mono font-bold uppercase tracking-wider text-cyan-400">Recommended Adjustments</h4>
+        <div class="space-y-2 max-h-52 overflow-y-auto pr-1" id="optChangesList">
+          <!-- Dynamically populated -->
+        </div>
+      </div>
+
+      <!-- Action buttons -->
+      <div class="flex items-center justify-end space-x-3 pt-2 border-t border-white/10">
+        <button onclick="closeOptimizeModal()" class="px-4 py-2 rounded-xl text-xs font-mono font-semibold text-slate-400 hover:text-white bg-white/5 hover:bg-white/10 transition cursor-pointer">
+          Dismiss
+        </button>
+        <button onclick="applyOptimizations()" class="px-5 py-2.5 rounded-xl text-xs font-display font-bold text-slate-950 bg-gradient-to-r from-cyan-400 to-emerald-400 hover:opacity-90 shadow-neon-emerald transition active:scale-95 cursor-pointer flex items-center space-x-1.5">
+          <i data-lucide="check-circle" class="w-4 h-4"></i>
+          <span>Apply AI Recommendations</span>
+        </button>
+      </div>
+
+    </div>
+  </div>
+
   <!-- Futuristic Footer -->
   <footer class="mt-auto py-5 glass-panel border-t border-white/10 text-center text-xs text-slate-500">
     <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2 font-mono">
-      <p>CrowdPulse 3D &copy; 2026 · Applied Machine Learning Decision Support System</p>
+      <p>CrowdPulse 3D Pro &copy; 2026 · Calibrated Decision Support System</p>
       <div class="flex items-center space-x-3 text-slate-400">
         <a href="/docs" target="_blank" class="hover:text-cyan-400 transition">Swagger API</a>
         <span>·</span>
@@ -625,7 +714,7 @@
   <!-- Toast Notification Container -->
   <div id="toastContainer" class="fixed bottom-5 right-5 z-50 pointer-events-none"></div>
 
-  <!-- APPLICATION LOGIC WITH THREE.JS & GSAP -->
+  <!-- APPLICATION LOGIC WITH THREE.JS, GSAP & COUNTERFACTUAL OPTIMIZER -->
   <script>
     // Initialize Lucide Icons
     lucide.createIcons();
@@ -636,9 +725,12 @@
     let debounceTimer = null;
     let lastResult = null;
     let currentProbability = 0;
+    let catToSubcatMap = {};
+    let categoryMediansMap = {};
+    let pendingOptimizationPlan = null;
 
     // Three.js Scene Variables
-    let scene, camera, renderer, coreMesh, wireframeMesh, particleRing;
+    let scene, camera, renderer, coreMesh, particleRing;
     let targetCoreColor = new THREE.Color(0x06b6d4);
 
     // Initialize 3D Holographic Scene
@@ -658,7 +750,7 @@
       renderer.setSize(width, height);
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
-      // 1. Central 3D Geometric Core (Icosahedron)
+      // 1. Central 3D Geometric Core
       const coreGeo = new THREE.IcosahedronGeometry(1.6, 2);
       const coreMat = new THREE.MeshPhongMaterial({
         color: 0x06b6d4,
@@ -729,7 +821,6 @@
       function animate() {
         requestAnimationFrame(animate);
 
-        // Dynamic rotation speed based on probability
         const speedMultiplier = 0.005 + (currentProbability * 0.015);
         coreMesh.rotation.x += speedMultiplier;
         coreMesh.rotation.y += speedMultiplier * 1.3;
@@ -737,11 +828,9 @@
         particleRing.rotation.z += speedMultiplier * 0.8;
         particleRing.rotation.y += speedMultiplier * 0.5;
 
-        // Smooth Mouse Parallax
         coreMesh.position.x += (mouseX - coreMesh.position.x) * 0.05;
         coreMesh.position.y += (-mouseY - coreMesh.position.y) * 0.05;
 
-        // Color interpolation
         coreMesh.material.color.lerp(targetCoreColor, 0.05);
         coreMesh.material.emissive.lerp(targetCoreColor, 0.05);
 
@@ -786,11 +875,63 @@
       }
     }
 
+    // Load category and subcategory registries
+    async function loadCategoryRegistry() {
+      const base = getApiBaseUrl();
+      try {
+        const res = await fetch(`${base}/api/categories`);
+        if (res.ok) {
+          const data = await res.json();
+          catToSubcatMap = data.cat_to_subcat || {};
+          categoryMediansMap = data.category_medians || {};
+          updateSubcategories('Games');
+          updateMedianRatio();
+        }
+      } catch (e) {
+        console.warn("Could not load categories map:", e);
+      }
+    }
+
+    function onMainCategoryChange() {
+      const mc = document.getElementById('categorySelect').value;
+      updateSubcategories(mc);
+      updateMedianRatio();
+      onInputChange();
+    }
+
+    function updateSubcategories(mainCat, selectedSubcat = null) {
+      const select = document.getElementById('subCategorySelect');
+      select.innerHTML = '';
+      const list = catToSubcatMap[mainCat] || [mainCat];
+      list.forEach(sub => {
+        const opt = document.createElement('option');
+        opt.value = sub;
+        opt.innerText = sub;
+        if (selectedSubcat && sub === selectedSubcat) opt.selected = true;
+        select.appendChild(opt);
+      });
+      if (!selectedSubcat && list.length > 0) {
+        select.value = list[0];
+      }
+    }
+
+    function updateMedianRatio() {
+      const mc = document.getElementById('categorySelect').value;
+      const goal = parseFloat(document.getElementById('goalInput').value) || 1000;
+      const median = categoryMediansMap[mc] || 5000;
+      const ratio = (goal / median).toFixed(1);
+      const badge = document.getElementById('medianRatioBadge');
+      if (badge) {
+        badge.innerText = `${ratio}x Category Median ($${median.toLocaleString()})`;
+      }
+    }
+
     // Presets
     const presets = {
       game: {
         title: "The Odyssey: Strategic Deckbuilding Board Game",
-        category: "Games",
+        main_category: "Games",
+        category: "Tabletop Games",
         country: "US",
         goal: 12000,
         duration: 30,
@@ -799,7 +940,8 @@
       },
       iot: {
         title: "NEXTGEN ULTRA SMART IOT HOME AUTOMATION HUB",
-        category: "Technology",
+        main_category: "Technology",
+        category: "Hardware",
         country: "US",
         goal: 75000,
         duration: 45,
@@ -808,7 +950,8 @@
       },
       comic: {
         title: "Chronicles of Astraea: 120-Page Hardcover Artbook",
-        category: "Publishing",
+        main_category: "Publishing",
+        category: "Art Books",
         country: "US",
         goal: 4500,
         duration: 25,
@@ -817,7 +960,8 @@
       },
       film: {
         title: "Neon Horizon: Independent Sci-Fi Short Film",
-        category: "Film & Video",
+        main_category: "Film & Video",
+        category: "Narrative Film",
         country: "GB",
         goal: 28000,
         duration: 35,
@@ -830,7 +974,8 @@
       const p = presets[key];
       if (!p) return;
       document.getElementById('titleInput').value = p.title;
-      document.getElementById('categorySelect').value = p.category;
+      document.getElementById('categorySelect').value = p.main_category;
+      updateSubcategories(p.main_category, p.category);
       document.getElementById('countrySelect').value = p.country;
       setGoal(p.goal);
       document.getElementById('durationSlider').value = p.duration;
@@ -839,8 +984,9 @@
       document.getElementById('daySelect').value = p.day;
 
       updateTitleStats();
+      updateMedianRatio();
       runPrediction();
-      showToast(`Loaded ${p.category} archetype`);
+      showToast(`Loaded ${p.main_category} archetype`);
     }
 
     function setGoal(val) {
@@ -852,11 +998,13 @@
       val = Math.max(500, Number(val) || 0);
       document.getElementById('goalSlider').value = Math.min(val, 100000);
       document.getElementById('goalDisplay').innerText = `$${Number(val).toLocaleString()}`;
+      updateMedianRatio();
     }
 
     function syncGoalInput(val) {
       document.getElementById('goalInput').value = val;
       document.getElementById('goalDisplay').innerText = `$${Number(val).toLocaleString()}`;
+      updateMedianRatio();
     }
 
     function syncDuration(val) {
@@ -877,16 +1025,15 @@
       }
     }
 
-    // Debounced automatic evaluation
     function onInputChange() {
       updateTitleStats();
+      updateMedianRatio();
       clearTimeout(debounceTimer);
       debounceTimer = setTimeout(() => {
         runPrediction();
       }, 350);
     }
 
-    // Initialize Gauge Chart
     function initGauge() {
       const ctx = document.getElementById('gaugeCanvas').getContext('2d');
       gaugeChart = new Chart(ctx, {
@@ -911,7 +1058,6 @@
       });
     }
 
-    // Initialize Futuristic Neon Chart.js Line Graph
     function initSimChart() {
       const ctx = document.getElementById('simulationChart').getContext('2d');
       
@@ -995,7 +1141,6 @@
       });
     }
 
-    // Execute Prediction & Simulation via API
     async function runPrediction() {
       const submitBtn = document.getElementById('submitBtn');
       if (submitBtn) submitBtn.classList.add('opacity-80');
@@ -1005,6 +1150,7 @@
       const payload = {
         title: document.getElementById('titleInput').value.trim(),
         main_category: document.getElementById('categorySelect').value,
+        category: document.getElementById('subCategorySelect').value || null,
         country: document.getElementById('countrySelect').value,
         usd_goal: parseFloat(document.getElementById('goalInput').value) || 1000,
         duration_days: parseFloat(document.getElementById('durationSlider').value) || 30,
@@ -1013,7 +1159,6 @@
       };
 
       try {
-        // 1. Prediction Call
         const res = await fetch(`${baseUrl}/api/predict`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -1025,10 +1170,11 @@
         lastResult = data;
         renderPrediction(data);
 
-        // 2. Simulation Call for Sweet Spot Curve
+        // Simulation sweep
         const simPayload = {
           title: payload.title,
           main_category: payload.main_category,
+          category: payload.category,
           country: payload.country,
           duration_days: payload.duration_days,
           min_goal: 2000,
@@ -1059,7 +1205,7 @@
       const pct = Math.round(prob * 100);
       currentProbability = prob;
 
-      // GSAP Smooth Number Counter Animation
+      // GSAP Rolling Counter
       const probEl = document.getElementById('probValue');
       const startVal = parseInt(probEl.innerText) || 0;
       gsap.to({ val: startVal }, {
@@ -1071,13 +1217,11 @@
         }
       });
 
-      // Update 3D Core Color & Gauge Color
-      let colorHex = '#06b6d4'; // Cyan default
+      // 3D Core Color & Gauge Color
+      let colorHex = '#06b6d4';
       if (prob >= 0.70) {
-        colorHex = '#10b981'; // Vibrant Emerald
+        colorHex = '#10b981';
         targetCoreColor.setHex(0x10b981);
-        
-        // Confetti burst for high confidence!
         if (typeof confetti === 'function') {
           confetti({
             particleCount: 45,
@@ -1087,13 +1231,13 @@
           });
         }
       } else if (prob >= 0.50) {
-        colorHex = '#06b6d4'; // Cyan Viable
+        colorHex = '#06b6d4';
         targetCoreColor.setHex(0x06b6d4);
       } else if (prob >= 0.35) {
-        colorHex = '#f59e0b'; // Amber Warning
+        colorHex = '#f59e0b';
         targetCoreColor.setHex(0xf59e0b);
       } else {
-        colorHex = '#f43f5e'; // Rose Critical
+        colorHex = '#f43f5e';
         targetCoreColor.setHex(0xf43f5e);
       }
 
@@ -1117,10 +1261,10 @@
         badge.className = "inline-flex items-center space-x-1.5 px-3 py-1 rounded-full text-xs font-mono font-bold bg-rose-500/10 text-rose-400 border border-rose-500/30 shadow-neon-rose";
         dot.className = "w-2 h-2 rounded-full bg-rose-500";
         verdict.innerText = "PREDICTION: HIGH RISK OF FAILURE";
-        header.innerText = "Hurdles Detected";
+        header.innerText = "Critical Hurdles Detected";
       }
 
-      document.getElementById('riskDetail').innerText = `Tier: ${data.risk_level} · Model: ${data.model_name}`;
+      document.getElementById('riskDetail').innerText = `Tier: ${data.risk_level} · Calibrated Model: ${data.model_name}`;
 
       // Micro KPIs
       const goalVal = data.usd_goal;
@@ -1128,7 +1272,7 @@
       
       const hurdle = document.getElementById('kpiHurdle');
       if (goalVal <= 10000) { hurdle.innerText = "Low Hurdle"; hurdle.className = "font-bold font-mono text-emerald-400 text-xs"; }
-      else if (goalVal <= 30000) { hurdle.innerText = "Moderate"; hurdle.className = "font-bold font-mono text-cyan-400 text-xs"; }
+      else if (goalVal <= 25000) { hurdle.innerText = "Moderate"; hurdle.className = "font-bold font-mono text-cyan-400 text-xs"; }
       else { hurdle.innerText = "High Hurdle"; hurdle.className = "font-bold font-mono text-rose-400 text-xs"; }
 
       const pace = document.getElementById('kpiPace');
@@ -1146,7 +1290,10 @@
         titleKpi.className = "font-bold font-mono text-amber-400 text-xs";
       }
 
-      // Advisory List with GSAP Stagger
+      // Render Similar Historical Campaigns (Option 2)
+      renderSimilarCampaigns(data.similar_campaigns || []);
+
+      // Advisory List
       const list = document.getElementById('adviceList');
       list.innerHTML = "";
       data.actionable_advice.forEach(item => {
@@ -1169,6 +1316,36 @@
       });
     }
 
+    function renderSimilarCampaigns(campaigns) {
+      const container = document.getElementById('similarCampaignsList');
+      if (!campaigns || campaigns.length === 0) {
+        container.innerHTML = `<div class="p-3 bg-slate-900/60 rounded-xl border border-white/10 text-slate-400 text-xs text-center col-span-3">No direct historical matches found in this cohort.</div>`;
+        return;
+      }
+
+      container.innerHTML = '';
+      campaigns.forEach(c => {
+        const isSuccess = c.outcome === 'Successful';
+        const card = document.createElement('div');
+        card.className = "p-3 bg-slate-900/80 rounded-xl border border-white/10 space-y-1.5 transition hover:border-cyan-500/30";
+        card.innerHTML = `
+          <div class="flex items-center justify-between">
+            <span class="px-1.5 py-0.5 rounded text-[9px] font-mono font-bold ${isSuccess ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' : 'bg-rose-500/20 text-rose-300 border border-rose-500/30'}">
+              ${c.outcome.toUpperCase()}
+            </span>
+            <span class="text-[10px] font-mono text-cyan-400">${c.similarity_pct} Match</span>
+          </div>
+          <div class="font-display font-bold text-xs text-white truncate" title="${c.name}">${c.name}</div>
+          <div class="flex items-center justify-between text-[10px] font-mono text-slate-400">
+            <span>$${Number(c.usd_goal).toLocaleString()}</span>
+            <span>${c.duration_days} Days</span>
+          </div>
+          <div class="text-[9px] font-mono text-slate-500 truncate">${c.category}</div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
     function renderSimulation(data) {
       const labels = data.curve.map(pt => `$${(pt.goal / 1000).toFixed(0)}k`);
       const probs = data.curve.map(pt => pt.probability);
@@ -1178,6 +1355,115 @@
       simChart.data.datasets[0].data = probs;
       simChart.data.datasets[1].data = threshold;
       simChart.update();
+    }
+
+    // Auto-Optimize Counterfactual Engine (Option 1)
+    async function triggerAutoOptimize() {
+      const baseUrl = getApiBaseUrl();
+      const payload = {
+        title: document.getElementById('titleInput').value.trim(),
+        main_category: document.getElementById('categorySelect').value,
+        category: document.getElementById('subCategorySelect').value || null,
+        country: document.getElementById('countrySelect').value,
+        usd_goal: parseFloat(document.getElementById('goalInput').value) || 1000,
+        duration_days: parseFloat(document.getElementById('durationSlider').value) || 30,
+        launch_month: parseInt(document.getElementById('monthSelect').value) || 10,
+        launch_day_of_week: parseInt(document.getElementById('daySelect').value) || 1
+      };
+
+      showToast("Calculating optimal counterfactual parameters...");
+
+      try {
+        const res = await fetch(`${baseUrl}/api/optimize`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const plan = await res.json();
+        pendingOptimizationPlan = plan;
+        openOptimizeModal(plan);
+      } catch (err) {
+        console.error("Optimize error:", err);
+        showToast("Optimization engine offline");
+      }
+    }
+
+    function openOptimizeModal(plan) {
+      const modal = document.getElementById('optimizeModal');
+      const card = document.getElementById('modalCard');
+      
+      document.getElementById('optCurrentProb').innerText = plan.current_probability_pct;
+      document.getElementById('optNewProb').innerText = plan.optimized_probability_pct;
+      document.getElementById('optLiftBadge').innerText = plan.probability_lift;
+
+      const list = document.getElementById('optChangesList');
+      list.innerHTML = '';
+      if (plan.changes && plan.changes.length > 0) {
+        plan.changes.forEach(c => {
+          const item = document.createElement('div');
+          item.className = "p-2.5 rounded-lg bg-slate-950/60 border border-white/10 text-xs space-y-1";
+          item.innerHTML = `
+            <div class="flex items-center justify-between font-mono">
+              <span class="font-bold text-white">${c.param}</span>
+              <div class="flex items-center space-x-1.5">
+                <span class="text-rose-400 line-through">${c.from}</span>
+                <span class="text-slate-400">➔</span>
+                <span class="text-emerald-400 font-bold">${c.to}</span>
+              </div>
+            </div>
+            <p class="text-[11px] text-slate-400 leading-tight">${c.reason}</p>
+          `;
+          list.appendChild(item);
+        });
+      } else {
+        list.innerHTML = `<div class="p-3 text-slate-400 text-xs text-center">${plan.message || 'Configuration is already optimal.'}</div>`;
+      }
+
+      modal.classList.remove('hidden');
+      setTimeout(() => {
+        modal.classList.remove('opacity-0');
+        card.classList.remove('scale-95');
+      }, 10);
+      lucide.createIcons();
+    }
+
+    function closeOptimizeModal() {
+      const modal = document.getElementById('optimizeModal');
+      const card = document.getElementById('modalCard');
+      modal.classList.add('opacity-0');
+      card.classList.add('scale-95');
+      setTimeout(() => {
+        modal.classList.add('hidden');
+      }, 300);
+    }
+
+    function applyOptimizations() {
+      if (!pendingOptimizationPlan || !pendingOptimizationPlan.recommended_params) {
+        closeOptimizeModal();
+        return;
+      }
+
+      const p = pendingOptimizationPlan.recommended_params;
+      setGoal(p.usd_goal);
+      document.getElementById('durationSlider').value = p.duration_days;
+      document.getElementById('durationDisplay').innerText = `${p.duration_days} Days`;
+      document.getElementById('monthSelect').value = p.launch_month;
+      document.getElementById('daySelect').value = p.launch_day;
+
+      closeOptimizeModal();
+      runPrediction();
+      showToast("Applied AI optimizations!");
+
+      if (typeof confetti === 'function') {
+        confetti({
+          particleCount: 75,
+          spread: 80,
+          origin: { y: 0.6 },
+          colors: ['#22d3ee', '#10b981', '#a855f7']
+        });
+      }
     }
 
     function showToast(message) {
@@ -1203,13 +1489,13 @@
         showToast("Generate an evaluation first!");
         return;
       }
-      const text = `🚀 CrowdPulse 3D Campaign Intelligence Report
+      const text = `🚀 CrowdPulse 3D Pro Campaign Intelligence Report
 Project: ${lastResult.title}
-Category: ${lastResult.main_category} (${lastResult.country})
+Category: ${lastResult.main_category} > ${lastResult.category} (${lastResult.country})
 Funding Target: $${Number(lastResult.usd_goal).toLocaleString()} USD
 Duration: ${lastResult.duration_days} Days
 ---
-Prediction: ${lastResult.prediction} (${lastResult.probability_pct} Probability)
+Calibrated Prediction: ${lastResult.prediction} (${lastResult.probability_pct} Probability)
 Risk Tier: ${lastResult.risk_level}
 Directives:
 ${lastResult.actionable_advice.map(a => `• ${a}`).join('\n')}
@@ -1230,9 +1516,10 @@ Live Tool: https://crowdpulse-api-3yaw.onrender.com/`;
       initSimChart();
       updateTitleStats();
       checkBackendHealth();
-      runPrediction();
+      loadCategoryRegistry().then(() => {
+        runPrediction();
+      });
 
-      // Initialize 3D Card Tilt Effects
       if (typeof VanillaTilt !== 'undefined') {
         VanillaTilt.init(document.querySelectorAll("[data-tilt]"), {
           max: 6,

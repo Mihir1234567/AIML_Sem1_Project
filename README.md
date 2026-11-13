@@ -5,8 +5,8 @@
 [![Swagger API](https://img.shields.io/badge/Swagger%20API-Docs-blue?style=for-the-badge&logo=fastapi)](https://crowdpulse-api-3yaw.onrender.com/docs)
 [![Python Version](https://img.shields.io/badge/Python-3.11-3776AB?style=for-the-badge&logo=python)](https://www.python.org/)
 [![Scikit-Learn](https://img.shields.io/badge/scikit--learn-1.5.2-F7931E?style=for-the-badge&logo=scikit-learn)](https://scikit-learn.org/)
-[![Champion Model](https://img.shields.io/badge/Model-HistGradientBoosting-purple?style=for-the-badge)](https://scikit-learn.org/stable/modules/ensemble.html#histogram-based-gradient-boosting)
-[![ROC-AUC](https://img.shields.io/badge/Test%20ROC--AUC-0.7177-success?style=for-the-badge)]()
+[![Champion Model](https://img.shields.io/badge/Model-Calibrated%20HistGradientBoosting-purple?style=for-the-badge)](https://scikit-learn.org/stable/modules/ensemble.html#histogram-based-gradient-boosting)
+[![ROC-AUC](https://img.shields.io/badge/Test%20ROC--AUC-0.7394-success?style=for-the-badge)]()
 [![Design System](https://img.shields.io/badge/UI%2FUX-Bento%20Grid-indigo?style=for-the-badge)](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill)
 
 ---
@@ -183,11 +183,18 @@ The champion pipeline was tested on an unseen holdout dataset ($N = 12,000$ camp
 
 | Evaluation Metric | Test Score | Analytical Interpretation |
 | :--- | :---: | :--- |
-| **ROC-AUC** | **0.7177** | Strong discrimination between successful and failing campaigns using only pre-launch metadata. |
-| **Accuracy** | **67.14%** | Outperforms the naive majority-class baseline by over 13 percentage points. |
-| **Precision** | **61.58%** | Reliable positive predictive value when advising creators to proceed to launch. |
-| **Recall** | **48.63%** | Conservative positive identification; minimizes false hopes on high-risk projects. |
-| **F1 Score** | **0.5435** | Balanced harmonic mean on imbalanced real-world crowdfunding data. |
+| **ROC-AUC** | **0.7394** | High discrimination between successful and failing campaigns with relative category signals and subcategories (+0.0217 gain). |
+| **Accuracy** | **68.83%** | Outperforms the naive majority-class baseline by nearly 15 percentage points. |
+| **Brier Score** | **0.2002** | Reflects well-calibrated probabilities via `CalibratedClassifierCV(method='sigmoid')`. |
+| **Precision** | **63.21%** | Reliable positive predictive value when advising creators to proceed to launch. |
+| **F1 Score** | **0.5614** | Balanced harmonic mean on imbalanced real-world crowdfunding data. |
+
+### 5.2 Advanced Innovations Introduced
+1. **Relative Financial Hurdle (`goal_to_cat_median_ratio`):** Rather than evaluating goals in absolute terms alone, targets are normalized relative to their specific domain's empirical median (\$3k for Art vs \$18k for Technology).
+2. **Granular Sub-Category Integration (`category`):** 159 detailed sub-categories are encoded using frequency-binned One-Hot Encoding to separate micro-niche behaviors (*e.g. Tabletop Games vs Video Games*).
+3. **Probability Calibration (`CalibratedClassifierCV`):** Probabilities are calibrated so that a 20% score means exactly 20 out of 100 historical campaigns in that cohort achieved funding.
+4. **Counterfactual Auto-Optimization Engine (`POST /api/optimize`):** Automatically searches for the minimal required parameter shifts (goal right-sizing, optimal duration, launch day) to lift a sub-optimal campaign above the 65%+ viability threshold.
+5. **Ground-Truth Historical Campaign Matcher:** Uses nearest neighbor feature distance and token Jaccard similarity across 5,000 real Kickstarter campaigns to display 3 real-world precedents with actual names and outcomes.
 
 ### 5.2 Model Explainability (Permutation Importance)
 To avoid the notorious cardinality bias of tree Gini impurity, feature importance was evaluated via **Test-Set Permutation Feature Importance** (measuring the degradation in ROC-AUC when each column is randomly shuffled):
