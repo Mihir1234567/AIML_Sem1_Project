@@ -102,36 +102,72 @@ class PredictionResponse(BaseModel):
 def generate_recommendations(goal: float, duration: float, prob: float, category: str, title: str) -> List[str]:
     advice = []
     
-    # Financial target insights
-    if goal > 25000 and prob < 0.50:
-        advice.append(f"High Funding Target Alert: Campaigns with goals > $25,000 have an average failure rate over 65%. Consider an initial modest target of ${(goal * 0.5):,.0f} with stretch goals.")
-    elif goal > 50000:
-        advice.append("Large budget requirement: Ensure your pre-launch email waitlist covers at least 30-40% of the funding goal before going live.")
-        
-    # Duration insights
-    if duration > 35:
-        advice.append(f"Extended Duration Warning: 30-day campaigns historically perform better than {int(duration)}-day campaigns by maintaining momentum and reducing donor fatigue.")
-    elif duration < 14:
-        advice.append("Short Duration: Less than 2 weeks leaves limited window for algorithmic discovery on Kickstarter's explore page.")
+    # 1. Primary Risk & Probability Conditioning (Model-Grounded)
+    if prob < 0.35:
+        advice.append(
+            f"⚠️ Critical Hurdle Alert ({prob*100:.1f}% Estimated Viability): Over 75% of campaigns matching this profile fail to reach their goal under Kickstarter's all-or-nothing model. Do not launch without revising scope."
+        )
+        if goal > 10000:
+            advice.append(
+                f"Financial Restructuring: Consider lowering your initial goal to ${(goal * 0.5):,.0f} and utilizing stretch goals. Smaller initial targets trigger Kickstarter's trending algorithms faster."
+            )
+        else:
+            advice.append(
+                f"Audience Pre-Launch Deficit: For a ${goal:,.0f} goal in {category}, ensure you build a pre-launch backer waitlist covering at least 30-40% of the funds before day 1."
+            )
+    elif prob < 0.50:
+        advice.append(
+            f"⚡ Below Viability Threshold ({prob*100:.1f}% Probability): This campaign is hovering in the risk zone. Parameter tuning and pre-launch audience prep are recommended."
+        )
+        if goal > 15000:
+            advice.append(
+                f"Funding Right-Sizing: Campaigns in {category} have substantially higher success odds when the initial base target is under $12,000."
+            )
+    elif prob >= 0.70:
+        advice.append(
+            f"🌟 Strong Launch Profile ({prob*100:.1f}% Probability): Your campaign parameters fall into historically high-performing cohorts."
+        )
     else:
-        advice.append("Optimal Duration: 25-35 days is the sweet spot for crowdfunding momentum.")
-        
-    # Title analysis
-    words = title.split()
-    if len(words) < 3:
-        advice.append("Brief Title: Descriptive titles with 5-10 words detailing key benefits or product type see higher click-through rates.")
-    if title.isupper():
-        advice.append("Avoid ALL CAPS in title: It triggers spam heuristics and can reduce creator credibility.")
-    if '!' in title:
-        advice.append("Exclamation mark detected: Avoid over-hyped punctuation in titles.")
-        
-    # Category notes
-    if category.lower() in ['technology', 'journalism', 'crafts'] and prob < 0.55:
-        advice.append(f"Competitive Category: {category} has historically tight success margins. Emphasize a working prototype and transparent manufacturing timelines.")
+        advice.append(
+            f"Moderate Launch Profile ({prob*100:.1f}% Probability): Balanced viability. Focus on strong launch-week momentum to cross the 50% tipping point early."
+        )
 
-    if not advice or (prob >= 0.70 and len(advice) <= 1):
-        advice.insert(0, "🌟 Excellent Configuration: Your campaign parameters fall within historically high-performing cohorts.")
-        
+    # 2. Duration Insights (Context-Aware)
+    if duration > 35:
+        advice.append(
+            f"Extended Duration Warning: 30-day campaigns historically outperform {int(duration)}-day campaigns by maintaining momentum and preventing donor fatigue."
+        )
+    elif duration < 14:
+        advice.append(
+            "Short Duration Risk: Less than 14 days leaves limited runway for Kickstarter's organic discovery algorithm to feature your campaign."
+        )
+    elif prob >= 0.50:
+        advice.append(
+            "Optimal Duration: 25–35 days maintains peak crowdfunding urgency and backer engagement."
+        )
+
+    # 3. Category Sector Dynamics
+    hard_categories = ['technology', 'journalism', 'crafts', 'food']
+    if category.lower() in hard_categories and prob < 0.55:
+        advice.append(
+            f"Category Friction: {category} projects face tight margins. Prioritize showing a working prototype, transparent BOM/manufacturing costs, and realistic shipping dates."
+        )
+
+    # 4. Title & Semantic Cues
+    words = title.strip().split()
+    if len(words) < 3:
+        advice.append(
+            "Title Polish: Descriptive titles (5–9 words) detailing clear backer benefits achieve higher click-through rates."
+        )
+    if title.isupper() and len(title) > 3:
+        advice.append(
+            "Formatting Fix: Avoid ALL CAPS titles. It triggers spam heuristics and reduces backer credibility."
+        )
+    if '!' in title:
+        advice.append(
+            "Punctuation Fix: Remove exclamation marks. Organic backer response favors clear benefit statements over promotional hype."
+        )
+
     return advice
 
 # ----------------- API Endpoints -----------------
