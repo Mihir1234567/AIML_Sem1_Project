@@ -203,10 +203,6 @@
 
       <!-- Action items -->
       <div class="flex items-center space-x-2.5">
-        <button onclick="triggerAutoOptimize()" class="inline-flex items-center space-x-1.5 px-3 py-1.5 text-xs font-semibold text-white bg-gradient-to-r from-indigo-600 to-cyan-600 hover:opacity-90 rounded-xl transition shadow-neon-cyan cursor-pointer active:scale-95 font-display">
-          <i data-lucide="sparkles" class="w-3.5 h-3.5 text-amber-300 animate-pulse"></i>
-          <span>Auto-Optimize</span>
-        </button>
         <button onclick="copyShareReport()" class="hidden sm:inline-flex items-center space-x-1.5 px-3 py-1.5 text-xs font-semibold text-slate-200 bg-white/5 hover:bg-white/10 rounded-xl transition border border-white/10 cursor-pointer active:scale-95">
           <i data-lucide="share-2" class="w-3.5 h-3.5 text-cyan-400"></i>
           <span>Share Intel</span>
@@ -289,7 +285,7 @@
           </div>
         </div>
 
-        <form id="predictionForm" class="space-y-4" onsubmit="event.preventDefault(); runPrediction();">
+        <form id="predictionForm" class="space-y-4" onsubmit="event.preventDefault(); hasCalculatedOnce = true; runPrediction();">
           
           <!-- Title Input -->
           <div>
@@ -453,11 +449,32 @@
           </div>
 
           <!-- Recalculate CTA Button -->
-          <button type="submit" id="submitBtn"
+          <button type="submit" id="submitBtn" onclick="hasCalculatedOnce = true;"
             class="w-full py-3.5 px-4 bg-gradient-to-r from-cyan-500 via-indigo-600 to-emerald-500 hover:opacity-95 text-white font-display font-bold rounded-xl shadow-neon-cyan transition transform active:scale-[0.98] flex items-center justify-center space-x-2 cursor-pointer">
             <i data-lucide="cpu" class="w-4 h-4 text-white animate-pulse"></i>
             <span>Calculate AI Probability & 3D Core</span>
           </button>
+
+          <!-- Auto-Optimize Action Card (Only appears AFTER Calculate Probability is clicked) -->
+          <div id="autoOptimizeContainer" class="hidden pt-2 transition-all duration-300">
+            <div class="p-4 bg-gradient-to-br from-indigo-950/70 via-slate-900/90 to-cyan-950/70 rounded-xl border border-cyan-500/30 shadow-neon-cyan space-y-2.5">
+              <div class="flex items-center justify-between">
+                <span class="font-display font-bold text-white text-xs flex items-center">
+                  <i data-lucide="wand-2" class="w-4 h-4 mr-1.5 text-amber-300 animate-pulse"></i>
+                  Counterfactual Optimization
+                </span>
+                <span id="optBadge" class="text-[9px] font-mono font-bold text-amber-300 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/30">Action Recommended</span>
+              </div>
+              <p class="text-[11px] text-slate-300 font-mono leading-relaxed">
+                Calculates the minimal strategic adjustments to shift this campaign above the 65%+ viability threshold.
+              </p>
+              <button type="button" onclick="triggerAutoOptimize()" id="autoOptimizeBtn"
+                class="w-full py-3 px-3 rounded-lg text-xs font-display font-bold text-white bg-gradient-to-r from-indigo-600 via-indigo-500 to-cyan-500 hover:opacity-90 shadow-md transition transform active:scale-95 flex items-center justify-center space-x-2 cursor-pointer">
+                <i data-lucide="sparkles" class="w-3.5 h-3.5 text-amber-300"></i>
+                <span id="autoOptimizeBtnText">Auto-Optimize Campaign</span>
+              </button>
+            </div>
+          </div>
 
         </form>
 
@@ -496,15 +513,6 @@
               <div>
                 <h3 class="text-2xl font-display font-extrabold text-white" id="summaryHeader">Ready to Evaluate</h3>
                 <p class="text-xs text-slate-400 mt-0.5 font-mono" id="riskDetail">Model: Calibrated HistGradientBoosting (Test AUC: 73.9%)</p>
-              </div>
-
-              <!-- Auto-Optimize Trigger Button (Option 1) -->
-              <div class="pt-1">
-                <button type="button" onclick="triggerAutoOptimize()" id="autoOptimizeBannerBtn"
-                  class="w-full sm:w-auto inline-flex items-center justify-center space-x-2 px-4 py-2 rounded-xl text-xs font-display font-bold text-white bg-gradient-to-r from-indigo-600 via-indigo-500 to-cyan-500 hover:opacity-95 shadow-neon-cyan transition active:scale-95 cursor-pointer">
-                  <i data-lucide="wand-2" class="w-3.5 h-3.5 text-amber-300"></i>
-                  <span>Auto-Optimize Campaign (Counterfactual AI)</span>
-                </button>
               </div>
 
               <!-- 3 Interactive 3D Micro-Tiles -->
@@ -639,6 +647,24 @@
 
   </main>
 
+  <!-- Neural Loading HUD Overlay for Auto-Optimize -->
+  <div id="neuralLoadingOverlay" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black/80 backdrop-blur-md hidden opacity-0 transition-opacity duration-300">
+    <div class="glass-panel p-8 rounded-2xl border border-cyan-500/40 shadow-neon-cyan flex flex-col items-center space-y-4 max-w-sm text-center">
+      <div class="relative w-16 h-16 flex items-center justify-center">
+        <div class="absolute inset-0 rounded-full border-2 border-cyan-500/20 animate-ping"></div>
+        <div class="w-12 h-12 rounded-full border-2 border-t-cyan-400 border-r-indigo-500 border-b-transparent border-l-transparent animate-spin"></div>
+        <i data-lucide="cpu" class="w-6 h-6 text-cyan-400 absolute"></i>
+      </div>
+      <div class="space-y-1">
+        <h4 class="font-display font-bold text-white text-sm tracking-wide">COUNTERFACTUAL ENGINE ACTIVE</h4>
+        <p id="neuralLoadingText" class="text-xs font-mono text-cyan-300">Simulating 100+ parameter trajectories...</p>
+      </div>
+      <div class="w-full bg-slate-900 rounded-full h-1.5 overflow-hidden border border-white/10">
+        <div class="bg-gradient-to-r from-cyan-400 via-indigo-500 to-emerald-400 h-full w-2/3 animate-pulse"></div>
+      </div>
+    </div>
+  </div>
+
   <!-- Auto-Optimize Counterfactual Modal (Option 1) -->
   <div id="optimizeModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-md hidden opacity-0 transition-opacity duration-300">
     <div class="glass-panel w-full max-w-xl rounded-2xl p-6 shadow-2xl border border-cyan-500/30 space-y-5 relative transform scale-95 transition-transform duration-300" id="modalCard">
@@ -728,6 +754,7 @@
     let catToSubcatMap = {};
     let categoryMediansMap = {};
     let pendingOptimizationPlan = null;
+    let hasCalculatedOnce = false;
 
     // Three.js Scene Variables
     let scene, camera, renderer, coreMesh, particleRing;
@@ -985,6 +1012,7 @@
 
       updateTitleStats();
       updateMedianRatio();
+      hasCalculatedOnce = true;
       runPrediction();
       showToast(`Loaded ${p.main_category} archetype`);
     }
@@ -1290,6 +1318,26 @@
         titleKpi.className = "font-bold font-mono text-amber-400 text-xs";
       }
 
+      // Auto-Optimize Card: Only displayed after user has clicked Calculate AI Probability
+      const optContainer = document.getElementById('autoOptimizeContainer');
+      if (optContainer) {
+        if (hasCalculatedOnce) {
+          optContainer.classList.remove('hidden');
+          const optBadge = document.getElementById('optBadge');
+          if (optBadge) {
+            if (prob < 0.65) {
+              optBadge.innerText = "Action Recommended";
+              optBadge.className = "text-[9px] font-mono font-bold text-amber-300 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/30";
+            } else {
+              optBadge.innerText = "Already Strong";
+              optBadge.className = "text-[9px] font-mono font-bold text-emerald-300 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/30";
+            }
+          }
+        } else {
+          optContainer.classList.add('hidden');
+        }
+      }
+
       // Render Similar Historical Campaigns (Option 2)
       renderSimilarCampaigns(data.similar_campaigns || []);
 
@@ -1357,8 +1405,49 @@
       simChart.update();
     }
 
+    // Neural Loading HUD Controllers
+    function showNeuralLoader(text = "Simulating 100+ parameter trajectories...") {
+      const overlay = document.getElementById('neuralLoadingOverlay');
+      const textEl = document.getElementById('neuralLoadingText');
+      if (textEl) textEl.innerText = text;
+      if (overlay) {
+        overlay.classList.remove('hidden');
+        void overlay.offsetWidth; // trigger reflow for smooth transition
+        overlay.classList.remove('opacity-0');
+        overlay.classList.add('opacity-100');
+      }
+    }
+
+    function hideNeuralLoader() {
+      const overlay = document.getElementById('neuralLoadingOverlay');
+      if (overlay) {
+        overlay.classList.remove('opacity-100');
+        overlay.classList.add('opacity-0');
+        setTimeout(() => {
+          overlay.classList.add('hidden');
+        }, 300);
+      }
+    }
+
     // Auto-Optimize Counterfactual Engine (Option 1)
     async function triggerAutoOptimize() {
+      const optBtn = document.getElementById('autoOptimizeBtn');
+      const originalBtnHTML = optBtn ? optBtn.innerHTML : '';
+
+      if (optBtn) {
+        optBtn.disabled = true;
+        optBtn.classList.add('opacity-75', 'cursor-wait');
+        optBtn.innerHTML = `
+          <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-cyan-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+          </svg>
+          <span>Synthesizing Optimal Trajectory...</span>
+        `;
+      }
+
+      showNeuralLoader("Running counterfactual search across goal, duration, & timing...");
+
       const baseUrl = getApiBaseUrl();
       const payload = {
         title: document.getElementById('titleInput').value.trim(),
@@ -1387,6 +1476,14 @@
       } catch (err) {
         console.error("Optimize error:", err);
         showToast("Optimization engine offline");
+      } finally {
+        hideNeuralLoader();
+        if (optBtn) {
+          optBtn.disabled = false;
+          optBtn.classList.remove('opacity-75', 'cursor-wait');
+          optBtn.innerHTML = originalBtnHTML;
+          lucide.createIcons();
+        }
       }
     }
 
